@@ -1,8 +1,15 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import SplineBackground from "./SplineBackground";
+import { useLogin, usePrivy } from '@privy-io/react-auth';
+
 
 export function HeroSection() {
+    const { login } = useLogin();
+    const { authenticated } = usePrivy();
+
     return (
         <section className="relative h-screen flex items-center justify-center w-full overflow-hidden bg-black">
         {/* Animated 3D-style Background */}
@@ -57,8 +64,15 @@ export function HeroSection() {
                 size="lg" 
                 className="bg-primary hover:bg-primary/90 px-8 py-4 text-[16px] font-bold tracking-wide uppercase rounded-full shadow-2xl border-primary/20 border transition-all duration-300 hover:scale-105"
                 style={{ fontFamily: 'Lexend, sans-serif' }}
+                onClick={() => {
+                    if (authenticated) {
+                        window.location.href = "/dashboard";
+                    } else {
+                        login();
+                    }
+                }} // Redirect to dashboard if authenticated, otherwise trigger login
                 >
-                Start Betting Now
+                    Start Betting Now
                 <Play className="ml-2 h-5 w-5 rotate-90" />
                 </Button>
             </div>

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { SelfQRcodeWrapper, SelfAppBuilder } from '@selfxyz/qrcode';
 import { useWallets } from '@privy-io/react-auth';

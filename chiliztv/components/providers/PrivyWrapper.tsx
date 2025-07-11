@@ -15,6 +15,7 @@ export function PrivyWrapper({ children }: { children: React.ReactNode }) {
                 },
                 },
                 supportedChains: [spicy],
+                defaultChain: spicy,
             }}
             >
             {children}

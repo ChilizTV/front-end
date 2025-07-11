@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Edit, Wallet, Trophy, History, TrendingUp, TrendingDown } from "lucide-react";
-import { useUser } from "@privy-io/react-auth";
 
 // Mock data
 const mockUser = {
@@ -134,8 +133,6 @@ export function Dashboard() {
     const [tempUsername, setTempUsername] = useState(username);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const { user } = useUser();
-
     const handleUsernameUpdate = () => {
         const newUsername = tempUsername.trim();
         if (newUsername && newUsername !== username) {
@@ -146,10 +143,10 @@ export function Dashboard() {
             console.log("Username not changed or invalid");
         }
 
-        const updatedUser = {
-            ...user,
-            username: newUsername
-        };
+        // const updatedUser = {
+        //     ...user,
+        //     username: newUsername
+        // };
         
         setIsDialogOpen(false);
     };
