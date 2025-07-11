@@ -4,20 +4,14 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useLogin, useWallets, usePrivy } from '@privy-io/react-auth';
+import { useLogin, usePrivy } from '@privy-io/react-auth';
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 export function Header() {
     const router = useRouter();
     const { login } = useLogin();
-    const { wallets } = useWallets();
     const { ready, authenticated, logout } = usePrivy();
-
-    const walletAddress = wallets[0]?.address || "";
-    const displayAddress = walletAddress
-        ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-        : "";
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -54,7 +48,7 @@ export function Header() {
                         </button>
                         {authenticated && (
                             <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
-                                Dashboard
+                                Profile
                             </button>
                         )}
                     </nav>
@@ -66,11 +60,6 @@ export function Header() {
 
                     {/* Auth Buttons (Desktop) */}
                     <div className="hidden md:flex items-center gap-4">
-                        {authenticated && (
-                            <span className="text-white/80 text-sm hidden md:inline">
-                                {displayAddress}
-                            </span>
-                        )}
                         {!authenticated ? (
                             <>
                                 <Button
@@ -98,7 +87,7 @@ export function Header() {
                                     Dashboard
                                 </Button>
                                 <Button
-                                    variant="outline"
+                                    variant="secondary"
                                     className="border-white/20 hover:border-white hover:text-white"
                                     onClick={() => logout()}
                                 >
@@ -143,9 +132,6 @@ export function Header() {
                             <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
                                 {authenticated ? (
                                     <>
-                                        <span className="text-white/80 text-sm">
-                                            {displayAddress}
-                                        </span>
                                         <Button
                                             variant="outline"
                                             className="border-white/20 bg-primary text-white"

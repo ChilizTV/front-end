@@ -46,16 +46,16 @@ export function HeroSection() {
             <div className="max-w-5xl mx-auto text-center flex-1 flex flex-col justify-center">
             <div className="mb-8">
                 <h1 className="text-[64px] md:text-[80px] lg:text-[96px] font-black text-white leading-[0.9] mb-6 drop-shadow-2xl" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                Live Football.
+                    Live Football.
                 <br />
                 <span className="text-primary drop-shadow-2xl">Live Betting.</span>
                 </h1>
                 <p className="text-[20px] md:text-[24px] lg:text-[28px] font-semibold text-white mb-6 drop-shadow-lg" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                Experience the thrill of live action.
+                    Experience the thrill of live action.
                 </p>
-                <p className="text-[16px] md:text-[18px] text-white/95 leading-relaxed max-w-2xl mx-auto drop-shadow-md" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                Join thousands of fans betting on live football matches. &nbsp;
-                And earn Fan Tokens to unlock exclusive rewards and experiences.
+                <p className="text-[16px] md:text-[18px] text-white/95 leading-relaxed max-w-2xl mx-auto drop-shadow-md break-words" style={{ fontFamily: 'Lexend, sans-serif' }}>
+                    Join thousands of fans betting on live football matches.
+                    And earn Fan Tokens to unlock exclusive rewards and experiences.
                 </p>
             </div>
             
@@ -77,28 +77,6 @@ export function HeroSection() {
                 </Button>
             </div>
             </div>
-
-            {/* Bottom Stats Preview
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-            <div className="bg-gradient-to-r from-[#1a1919]/95 to-[#000000]/90 backdrop-blur-lg rounded-2xl px-6 md:px-8 py-4 border border-white/30 shadow-2xl">
-                <div className="flex items-center gap-4 md:gap-8 text-center">
-                <div>
-                    <div className="text-[20px] md:text-[24px] font-bold text-white" style={{ fontFamily: 'Lexend, sans-serif' }}>50K+</div>
-                    <div className="text-[10px] md:text-[12px] text-white/80" style={{ fontFamily: 'Lexend, sans-serif' }}>Active Bettors</div>
-                </div>
-                <div className="w-px h-6 md:h-8 bg-white/40"></div>
-                <div>
-                    <div className="text-[20px] md:text-[24px] font-bold text-white" style={{ fontFamily: 'Lexend, sans-serif' }}>₹10M+</div>
-                    <div className="text-[10px] md:text-[12px] text-white/80" style={{ fontFamily: 'Lexend, sans-serif' }}>Daily Volume</div>
-                </div>
-                <div className="w-px h-6 md:h-8 bg-white/40"></div>
-                <div>
-                    <div className="text-[20px] md:text-[24px] font-bold text-white" style={{ fontFamily: 'Lexend, sans-serif' }}>98.5%</div>
-                    <div className="text-[10px] md:text-[12px] text-white/80" style={{ fontFamily: 'Lexend, sans-serif' }}>Payout Rate</div>
-                </div>
-                </div>
-            </div>
-            </div> */}
         </div>
         </section>
     );

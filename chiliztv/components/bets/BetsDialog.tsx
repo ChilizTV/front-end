@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
+    Dialog,
+    DialogTrigger,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
 } from "@/components/ui/dialog";
 import Image from "next/image";
 import { FAN_TOKENS } from "@/utils/FanTokens";
@@ -48,118 +48,162 @@ export default function BetDialog({
     return (
         <Dialog>
         <DialogTrigger asChild>
-            <Button className="w-full bg-primary/80 hover:bg-primary/90 text-white font-semibold shadow-lg transition-all duration-200 transform hover:scale-105">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Place Bet
+            <Button
+            className="
+                w-full
+                bg-[var(--primary)]
+                hover:bg-[var(--primary-foreground)]
+                text-[var(--primary-foreground)]
+                font-semibold
+                shadow-md
+                rounded-lg
+                transition-transform duration-200 transform hover:scale-[1.05]
+                flex items-center justify-center gap-2
+            "
+            >
+            <TrendingUp className="w-5 h-5" />
+            Place Bet
             </Button>
         </DialogTrigger>
 
-        <DialogContent className="bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white border border-white/20 max-w-md shadow-2xl backdrop-blur-sm">
-            {/* Header with gradient border */}
-            <DialogHeader className="relative">
-                <div className="absolute inset-0 rounded-t-lg blur-sm"></div>
-                <DialogTitle className="text-2xl text-center font-bold bg-clip-text text-transparent relative z-10 py-4 text-white">
-                    Place Your Bet
-                </DialogTitle>
+        <DialogContent
+            className="
+            max-w-md
+            bg-[var(--background)]
+            rounded-xl
+            border
+            border-[var(--border)]
+            shadow-lg
+            p-8
+            text-[var(--foreground)]
+            "
+        >
+            <DialogHeader>
+            <DialogTitle className="text-3xl font-extrabold text-center mb-8">
+                Place Your Bet
+            </DialogTitle>
             </DialogHeader>
 
-            {/* Amount Input with enhanced styling */}
-            <div className="relative mt-6">
-                <div className="absolute inset-0 rounded-lg blur-sm"></div>
-                <div className="relative bg-zinc-800/80 backdrop-blur-sm rounded-lg border border-white/10 p-4">
-                    <div className="flex items-center justify-center mb-2">
-                        <span className="text-sm text-zinc-400 font-medium">Bet Amount (USD)</span>
-                    </div>
-                    <Input
-                        type="number"
-                        min="1"
-                        placeholder="0.00"
-                        className="text-center text-4xl font-bold py-6 bg-transparent text-white border-none focus:ring-2 focus:ring-emerald-500/50 placeholder:text-zinc-600"
-                        value={betAmount}
-                        onChange={(e) => setBetAmount(e.target.value)}
-                    />
-                </div>
+            {/* Amount Input */}
+            <div className="mb-10">
+            <label
+                htmlFor="betAmount"
+                className="block text-sm font-semibold text-[var(--muted-foreground)] mb-3"
+            >
+                Bet Amount (USD)
+            </label>
+            <Input
+                id="betAmount"
+                type="number"
+                min="1"
+                placeholder="0.00"
+                value={betAmount}
+                onChange={(e) => setBetAmount(e.target.value)}
+                className="
+                w-full
+                text-center
+                text-6xl
+                font-extrabold
+                bg-[var(--muted)]
+                border
+                border-[var(--border)]
+                rounded-xl
+                py-6
+                focus:ring-2
+                focus:ring-[var(--accent)]
+                placeholder-[var(--muted-foreground)]
+                transition duration-200
+                "
+            />
             </div>
 
-            {/* Team Selection with enhanced cards */}
-            <div className="mt-8">
-                <div className="text-center mb-4">
-                    <span className="text-sm text-zinc-400 font-medium">Select Team</span>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    {[TeamA, TeamB].map((team) => {
-                        const data = getTeamData(team);
-                        const symbol = data?.symbol || team;
-                        const image = data?.image || "";
-                        const isSelected = selectedTeam === symbol;
+            {/* Team Selection */}
+            <div>
+            <p className="text-center text-sm font-semibold text-[var(--muted-foreground)] mb-5">
+                Select Winning Team
+            </p>
+            <div className="grid grid-cols-2 gap-6">
+                {[TeamA, TeamB].map((team) => {
+                const data = getTeamData(team);
+                const symbol = data?.symbol || team;
+                const image = data?.image || "";
+                const isSelected = selectedTeam === symbol;
 
-                        return (
-                            <div key={team} className="relative">
-                                {isSelected && (
-                                    <div className="absolute inset-0 bg-primary/10 rounded-lg shadow-lg transition-all duration-300"></div>
-                                )}
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setSelectedTeam(symbol)}
-                                    className={`relative w-full h-20 flex flex-col items-center justify-center gap-2 transition-all duration-300 transform hover:scale-105 ${
-                                        isSelected 
-                                            ? 'bg-primary/20 border-emerald-500 text-emerald-300 hover:bg-primary/30 hover:border-secondary'
-                                            : 'bg-zinc-800/50 border-white/10 text-zinc-300 hover:bg-zinc-700/50 hover:border-white/20'
-                                    }`}
-                                >
-                                    {image && (
-                                        <div className={`p-1 rounded-full transition-all duration-300 ${
-                                            isSelected ? 'bg-gradient-to-r from-emerald-500/30 to-teal-500/30' : 'bg-zinc-700/50'
-                                        }`}>
-                                            <Image
-                                                src={image}
-                                                alt={`${team} Logo`}
-                                                width={28}
-                                                height={28}
-                                                className="rounded-full"
-                                            />
-                                        </div>
-                                    )}
-                                    <span className={`text-sm font-medium transition-all duration-300 ${
-                                        isSelected ? 'text-emerald-300' : 'text-zinc-400'
-                                    }`}>
-                                        {symbol}
-                                    </span>
-                                    {isSelected && (
-                                        <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                                    )}
-                                </Button>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Footer with enhanced button */}
-            <DialogFooter className="mt-8">
-                {isLoggedIn ? (
-                    <Button
-                        disabled={!selectedTeam || !betAmount.trim()}
-                        onClick={handleBet}
-                        className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:from-zinc-700 disabled:to-zinc-600 disabled:text-zinc-400 transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100 shadow-lg"
+                return (
+                    <button
+                    key={team}
+                    onClick={() => setSelectedTeam(symbol)}
+                    className={`
+                        flex flex-col items-center justify-center gap-3 py-5 rounded-xl border transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]
+                        ${
+                        isSelected
+                            ? "bg-[var(--accent)] border-[var(--accent-foreground)] text-[var(--accent-foreground)] shadow-md"
+                            : "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--muted-foreground)/10] hover:border-[var(--accent)]"
+                        }
+                    `}
+                    aria-pressed={isSelected}
                     >
-                        {selectedTeam && betAmount.trim() ? (
-                            <span className="flex items-center gap-2">
-                                <DollarSign className="w-4 h-4" />
-                                Confirm ${betAmount} on {selectedTeam}
-                            </span>
-                        ) : (
-                            'Select Team & Amount'
-                        )}
-                    </Button>
+                    {image && (
+                        <div
+                        className={`p-2 rounded-full transition-colors duration-200 ${
+                            isSelected ? "bg-[var(--accent-foreground)]" : "bg-[var(--muted-foreground)]"
+                        }`}
+                        >
+                        <Image
+                            src={image}
+                            alt={`${team} Logo`}
+                            width={32}
+                            height={32}
+                            className="rounded-full"
+                        />
+                        </div>
+                    )}
+                    <span className="text-lg font-semibold tracking-wide">{symbol}</span>
+                    </button>
+                );
+                })}
+            </div>
+            </div>
+
+            {/* Footer */}
+            <DialogFooter className="mt-10">
+            {isLoggedIn ? (
+                <Button
+                disabled={!selectedTeam || !betAmount.trim()}
+                onClick={handleBet}
+                className="
+                    w-full h-14 text-lg font-semibold
+                    bg-[var(--accent)]
+                    hover:bg-[var(--accent-foreground)]
+                    disabled:bg-[var(--muted)]
+                    disabled:text-[var(--muted-foreground)]
+                    rounded-xl
+                    transition-colors duration-200
+                "
+                >
+                {selectedTeam && betAmount.trim() ? (
+                    <span className="flex items-center justify-center gap-2">
+                    <DollarSign className="w-5 h-5" />
+                    Confirm ${betAmount} on {selectedTeam}
+                    </span>
                 ) : (
-                    <Button 
-                        onClick={onLogin} 
-                        className="w-full h-12 text-lg font-semibold bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
-                    >
-                        Log in to Trade
-                    </Button>
+                    "Select Team & Amount"
                 )}
+                </Button>
+            ) : (
+                <Button
+                onClick={onLogin}
+                className="
+                    w-full h-14 text-lg font-semibold
+                    bg-[var(--primary)]
+                    hover:bg-[var(--primary-foreground)]
+                    rounded-xl
+                    transition-colors duration-200
+                "
+                >
+                Log in to Trade
+                </Button>
+            )}
             </DialogFooter>
         </DialogContent>
         </Dialog>

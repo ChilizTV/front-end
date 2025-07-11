@@ -3,6 +3,8 @@ export interface FanTokenData {
     image: string;
     name: string;
     symbol: string;
+    tokenAddress?: string; // Optional, as not all tokens may have an address
+    testnetTokenAddress?: string; // Optional, for testnet tokens
 }
 
 export type FanTokenMap = {
@@ -16,6 +18,7 @@ export const FAN_TOKENS: FanTokenMap[] = [
     image: "https://actufinance.fr/wp-content/uploads/2022/02/PSG.png",
     name: "Paris Saint-Germain Fan Token",
     symbol: "PSG",
+    tokenAddress: "0x0b8f3c1d2e6a4b5c7f8e9d1a2b3c4d5e6f7g8h9i",
     },
 },
 {

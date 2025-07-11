@@ -1,11 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useLogin, useLogout, useWallets } from "@privy-io/react-auth";
+import { useLogin, usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import BetDialog from "../bets/BetsDialog";
+
 
 interface LiveDetailsPageProps {
     readonly id: string;
@@ -13,8 +14,7 @@ interface LiveDetailsPageProps {
 
 export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const { login } = useLogin();
-    const { logout } = useLogout();
-    const { wallets } = useWallets();
+    const { authenticated } = usePrivy();
 
     const [message, setMessage] = useState("");
     const [TeamA, setTeamA] = useState("PSG");
@@ -45,12 +45,6 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
         setMessage(`Bet of ${amount} placed on ${team}`);
     };
 
-    const isLoggedIn = wallets.length > 0;
-    const walletAddress = isLoggedIn ? wallets[0]?.address : null;
-    const displayAddress = walletAddress
-        ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
-        : "";
-
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-black text-white">
         {/* Left: Video + Chart */}
@@ -70,13 +64,10 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
         <div className="w-full md:w-[400px] border-l border-white/10 bg-zinc-950 flex flex-col">
             {/* Wallet Info */}
             <div className="p-4 border-b border-white/10 flex justify-between items-center">
-            {isLoggedIn ? (
-                <>
-                <span className="text-sm text-white/80">{displayAddress}</span>
-                <Button variant="outline" size="sm" onClick={logout}>
-                    Disconnect
+            {authenticated ? (
+                <Button variant="outline" size="sm" disabled>
+                    Connected
                 </Button>
-                </>
             ) : (
                 <Button variant="outline" size="sm" onClick={login}>
                 Connect Wallet
@@ -101,6 +92,8 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className="bg-zinc-800 text-white"
+                disabled={!authenticated}
+                autoFocus
                 />
                 <Button className="mt-2 w-full" disabled={!message.trim()}>
                 Send
@@ -112,7 +105,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             <div className="p-4 border-t border-white/10">
             <div className="text-lg font-semibold mb-2">Place Bet</div>
             <BetDialog
-                isLoggedIn={isLoggedIn}
+                isLoggedIn={authenticated}
                 onLogin={login}
                 onBetPlaced={(team, amount) => {
                     handleBetting(team, amount);
