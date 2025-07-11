@@ -1,6 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import LiveDetailsPage from "@/components/live/LiveMatch";
+import LiveDetailsPage from "@/components/live/LiveDetailsPage";
 
 export default function LivePage() {
     const params = {

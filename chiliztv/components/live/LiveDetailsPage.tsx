@@ -2,10 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { useLogin, useLogout, useWallets } from "@privy-io/react-auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
+import BetDialog from "../bets/BetsDialog";
 
 interface LiveDetailsPageProps {
     readonly id: string;
@@ -17,6 +17,22 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const { wallets } = useWallets();
 
     const [message, setMessage] = useState("");
+    const [TeamA, setTeamA] = useState("PSG");
+    const [TeamB, setTeamB] = useState("JUV");
+
+    useEffect(() => {
+        // Simulate fetching team data from an API or context
+        async function fetchTeams() {
+            // Here you would typically fetch the teams from an API
+            // For now, we are just setting static values
+            setTeamA("PSG");
+            setTeamB("JUV");
+        }
+
+        fetchTeams();
+    }
+    , []);
+    
 
     if (!id) {
         return 1;
@@ -85,15 +101,18 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             </div>
             </div>
 
-            {/* Betting Panel */}
-            <div className="p-4">
+            {/* Betting Panel with Dialog */}
+            <div className="p-4 border-t border-white/10">
             <div className="text-lg font-semibold mb-2">Place Bet</div>
-            <div className="grid grid-cols-2 gap-2 mb-2">
-                <Button variant="secondary">Buy</Button>
-                <Button variant="outline">Sell</Button>
-            </div>
-            <Input placeholder="Amount in SOL" className="mb-2 bg-zinc-800 text-white" />
-            <Button className="w-full">Log in to Trade</Button>
+            <BetDialog
+                isLoggedIn={isLoggedIn}
+                onLogin={login}
+                onBetPlaced={(team, amount) => {
+                console.log(`Bet placed from dialog: $${amount} USD on ${team}`);
+                }}
+                TeamA={TeamA}
+                TeamB={TeamB}
+            />
             </div>
 
             {/* Ad/Promo */}
