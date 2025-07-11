@@ -50,7 +50,7 @@ export function Header() {
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex flex-row gap-[38px] items-center text-[16px]">
                         <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
-                            Live Matches
+                            Browse Matches
                         </button>
                         {authenticated && (
                             <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>

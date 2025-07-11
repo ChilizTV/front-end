@@ -2,20 +2,47 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-    Card,  
+import {
+    Card,
     CardContent,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Edit, Wallet, Trophy, History, TrendingUp, TrendingDown } from "lucide-react";
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+    Edit,
+    Wallet,
+    Trophy,
+    History,
+    TrendingUp,
+    TrendingDown,
+} from "lucide-react";
+
+import SelfProtocolQRCode from "../selfProtcol/SelfProtocolQRCode";
 
 // Mock data
 const mockUser = {
@@ -24,7 +51,7 @@ const mockUser = {
     totalTokens: 15,
     totalBets: 127,
     winRate: 68.5,
-    totalWinnings: 2456.78
+    totalWinnings: 2456.78,
 };
 
 const mockFanTokens = [
@@ -35,7 +62,7 @@ const mockFanTokens = [
         quantity: 250,
         currentPrice: 12.45,
         change: 5.2,
-        logo: "https://images.unsplash.com/photo-1566577134815-6d8b89e60e11?w=60&h=60&fit=crop&crop=center"
+        logo: "https://images.unsplash.com/photo-1566577134815-6d8b89e60e11?w=60&h=60&fit=crop&crop=center",
     },
     {
         id: 2,
@@ -44,7 +71,7 @@ const mockFanTokens = [
         quantity: 180,
         currentPrice: 18.92,
         change: -2.8,
-        logo: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=60&h=60&fit=crop&crop=center"
+        logo: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=60&h=60&fit=crop&crop=center",
     },
     {
         id: 3,
@@ -53,7 +80,7 @@ const mockFanTokens = [
         quantity: 320,
         currentPrice: 22.15,
         change: 8.7,
-        logo: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=60&h=60&fit=crop&crop=center"
+        logo: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=60&h=60&fit=crop&crop=center",
     },
     {
         id: 4,
@@ -62,7 +89,7 @@ const mockFanTokens = [
         quantity: 150,
         currentPrice: 16.33,
         change: 3.1,
-        logo: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=60&h=60&fit=crop&crop=center"
+        logo: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=60&h=60&fit=crop&crop=center",
     },
     {
         id: 5,
@@ -71,11 +98,11 @@ const mockFanTokens = [
         quantity: 200,
         currentPrice: 14.87,
         change: -1.5,
-        logo: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=60&h=60&fit=crop&crop=center"
-    }
-];
+        logo: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=60&h=60&fit=crop&crop=center",
+    },
+    ];
 
-const mockBettingHistory = [
+    const mockBettingHistory = [
     {
         id: 1,
         date: "2025-01-10",
@@ -84,7 +111,7 @@ const mockBettingHistory = [
         stake: 50,
         odds: 2.4,
         result: "Won",
-        payout: 120
+        payout: 120,
     },
     {
         id: 2,
@@ -94,7 +121,7 @@ const mockBettingHistory = [
         stake: 75,
         odds: 1.8,
         result: "Won",
-        payout: 135
+        payout: 135,
     },
     {
         id: 3,
@@ -104,7 +131,7 @@ const mockBettingHistory = [
         stake: 100,
         odds: 1.9,
         result: "Lost",
-        payout: 0
+        payout: 0,
     },
     {
         id: 4,
@@ -114,84 +141,88 @@ const mockBettingHistory = [
         stake: 30,
         odds: 1.6,
         result: "Won",
-        payout: 48
+        payout: 48,
     },
     {
         id: 5,
         date: "2025-01-06",
         match: "Bayern Munich vs Dortmund",
-        bet: "Under 3.5 Goals",
+        bet: "Win against Dortmund",
         stake: 60,
         odds: 2.1,
         result: "Lost",
-        payout: 0
-    }
+        payout: 0,
+    },
 ];
 
 export function Dashboard() {
     const [username, setUsername] = useState(mockUser.username);
     const [tempUsername, setTempUsername] = useState(username);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [showVerificationDialog, setShowVerificationDialog] = useState(false);
 
     const handleUsernameUpdate = () => {
         const newUsername = tempUsername.trim();
         if (newUsername && newUsername !== username) {
-            setUsername(newUsername);
-            // Here you would typically make an API call to update the username in your backend
-            console.log(`Username updated to: ${newUsername}`);
-        } else {
-            console.log("Username not changed or invalid");
+        setUsername(newUsername);
+        console.log(`Username updated to: ${newUsername}`);
         }
-
-        // const updatedUser = {
-        //     ...user,
-        //     username: newUsername
-        // };
-        
         setIsDialogOpen(false);
     };
 
-    const totalTokenValue = mockFanTokens.reduce((sum, token) => sum + (token.quantity * token.currentPrice), 0);
+    const totalTokenValue = mockFanTokens.reduce(
+        (sum, token) => sum + token.quantity * token.currentPrice,
+        0
+    );
 
     return (
         <div className="min-h-screen bg-black text-white">
-        <div className="container mx-auto px-6 py-8">
+        <div className="container mx-auto px-4 sm:px-6 py-6">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-                <h1 className="text-[32px] font-bold text-white mb-2" style={{ fontFamily: 'Lexend, sans-serif' }}>
+                <h1 className="text-3xl font-bold mb-1" style={{ fontFamily: "Lexend, sans-serif" }}>
                 Dashboard
                 </h1>
-                <p className="text-white/70" style={{ fontFamily: 'Lexend, sans-serif' }}>
+                <p className="text-white/70 text-sm">
                 Welcome back, {username}
                 </p>
             </div>
-            <div className="flex items-center gap-4">
-                <Badge className="bg-primary/20 text-primary border-primary/30">
+            <div className="flex items-center gap-2">
+            <Badge className="bg-primary/20 text-primary border-primary/30">
                 VIP Member
-                </Badge>
+            </Badge>
+            <Button
+                variant="default"
+                size="sm"
+                className="text-xs text-white/70 hover:text-white underline px-1"
+                onClick={() => setShowVerificationDialog(true)}
+            >
+                Get Verified
+            </Button>
+            {showVerificationDialog && (
+                <SelfProtocolQRCode onClose={() => setShowVerificationDialog(false)} />
+            )}
             </div>
             </div>
 
             {/* User Profile Card */}
-            <Card className="mb-8 bg-gradient-to-r from-[#1a1919] to-[#0f0f0f] border-white/10">
+            <Card className="mb-6 bg-gradient-to-r from-[#1a1919] to-[#0f0f0f] border-white/10">
             <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                <div className="flex items-center gap-6">
-                    <Avatar className="w-20 h-20 border-2 border-primary/30">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="flex items-center gap-5">
+                    <Avatar className="w-16 h-16 border-2 border-primary/30">
                     <AvatarImage src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" />
-                    <AvatarFallback className="bg-primary/20 text-primary text-xl font-bold">
+                    <AvatarFallback className="bg-primary/20 text-white text-xl font-bold">
                         {username.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                     </Avatar>
                     <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <h2 className="text-[24px] font-bold text-white" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                        {username}
-                        </h2>
+                    <div className="flex items-center gap-2">
+                        <h2 className="text-xl text-white font-bold">{username}</h2>
                         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-white/60 hover:text-white p-1">
+                            <Button variant="ghost" size="sm" className="p-1 text-white/60 hover:text-white">
                             <Edit className="w-4 h-4" />
                             </Button>
                         </DialogTrigger>
@@ -209,7 +240,6 @@ export function Dashboard() {
                                 value={tempUsername}
                                 onChange={(e) => setTempUsername(e.target.value)}
                                 className="bg-white/5 border-white/10 text-white"
-                                placeholder="Enter new username"
                                 />
                             </div>
                             <div className="flex gap-2">
@@ -224,88 +254,44 @@ export function Dashboard() {
                         </DialogContent>
                         </Dialog>
                     </div>
-                    <div className="flex items-center gap-2 text-white/60 mb-2">
-                        <Wallet className="w-4 h-4" />
-                        <span className="font-mono text-sm">{mockUser.walletAddress}</span>
+                    <div className="text-white/60 text-sm font-mono truncate max-w-[220px]">
+                        <Wallet className="inline-block w-4 h-4 mr-1" />
+                        {mockUser.walletAddress}
                     </div>
-                    <div className="flex items-center gap-6 text-sm">
+                    <div className="text-sm text-white/70 flex gap-4 mt-1">
                         <div className="flex items-center gap-1">
                         <Trophy className="w-4 h-4 text-yellow-500" />
-                        <span className="text-white/80">Win Rate: {mockUser.winRate}%</span>
+                        Win Rate: {mockUser.winRate}%
                         </div>
-                        <div className="text-white/80">
-                        Total Bets: {mockUser.totalBets}
-                        </div>
+                        <span>Total Bets: {mockUser.totalBets}</span>
                     </div>
                     </div>
                 </div>
                 <div className="text-right">
-                    <div className="text-[24px] font-bold text-green-400 mb-1">
-                    ${mockUser.totalWinnings.toLocaleString()}
-                    </div>
-                    <div className="text-white/60 text-sm">Total Winnings</div>
+                    <p className="text-2xl font-bold text-green-400">${mockUser.totalWinnings.toLocaleString()}</p>
+                    <p className="text-sm text-white/60">Total Winnings</p>
                 </div>
                 </div>
             </CardContent>
             </Card>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-white/60 text-sm mb-1">Fan Tokens</p>
-                    <p className="text-[24px] font-bold text-white">{mockUser.totalTokens}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-primary" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-white/60 text-sm mb-1">Portfolio Value</p>
-                    <p className="text-[24px] font-bold text-white">${totalTokenValue.toLocaleString()}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-green-500" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-            <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-white/60 text-sm mb-1">Active Bets</p>
-                    <p className="text-[24px] font-bold text-white">7</p>
-                    </div>
-                    <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <History className="w-6 h-6 text-blue-500" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <StatCard title="Fan Tokens" value={mockUser.totalTokens} icon={<Trophy className="w-6 h-6 text-primary" />} />
+            <StatCard title="Portfolio Value" value={`$${totalTokenValue.toLocaleString()}`} icon={<TrendingUp className="w-6 h-6 text-green-500" />} />
+            <StatCard title="Active Bets" value={7} icon={<History className="w-6 h-6 text-blue-500" />} />
             </div>
 
-            {/* Main Content Tabs */}
+            {/* Tabs for main content */}
             <Tabs defaultValue="tokens" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-[#1a1919] border-white/10 mb-6">
-                <TabsTrigger value="tokens" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Fan Tokens
-                </TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Betting History
-                </TabsTrigger>
+            <TabsList className="grid grid-cols-2 w-full bg-[#1a1919] border-white/10 mb-4">
+                <TabsTrigger value="tokens" className="data-[state=active]:bg-primary">Fan Tokens</TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-primary">Betting History</TabsTrigger>
             </TabsList>
 
-            {/* Fan Tokens Tab */}
+            {/* Fan Tokens */}
             <TabsContent value="tokens">
-                <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
+                <Card className="bg-[#0f0f0f] border-white/10">
                 <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                     <Trophy className="w-5 h-5 text-primary" />
@@ -313,62 +299,18 @@ export function Dashboard() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {mockFanTokens.map((token) => (
-                        <Card key={token.id} className="bg-[#0f0f0f] border-white/10 hover:border-primary/30 transition-colors">
-                        <CardContent className="p-4">
-                            <div className="flex items-center gap-3 mb-3">
-                            <Avatar className="w-10 h-10">
-                                <AvatarImage src={token.logo} alt={token.team} />
-                                <AvatarFallback className="bg-primary/20 text-primary text-xs">
-                                {token.symbol}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <h3 className="font-bold text-white text-sm">{token.team}</h3>
-                                <p className="text-white/60 text-xs">{token.symbol}</p>
-                            </div>
-                            </div>
-                            <div className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <span className="text-white/60 text-xs">Quantity</span>
-                                <span className="text-white font-bold">{token.quantity}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-white/60 text-xs">Price</span>
-                                <span className="text-white font-bold">${token.currentPrice}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                                <span className="text-white/60 text-xs">Change</span>
-                                <div className="flex items-center gap-1">
-                                {token.change > 0 ? (
-                                    <TrendingUp className="w-3 h-3 text-green-500" />
-                                ) : (
-                                    <TrendingDown className="w-3 h-3 text-red-500" />
-                                )}
-                                <span className={`text-xs font-bold ${token.change > 0 ? 'text-green-500' : 'text-red-500'}`}>
-                                    {token.change > 0 ? '+' : ''}{token.change}%
-                                </span>
-                                </div>
-                            </div>
-                            <div className="pt-2 border-t border-white/10">
-                                <div className="flex justify-between items-center">
-                                <span className="text-white/60 text-xs">Total Value</span>
-                                <span className="text-white font-bold">${(token.quantity * token.currentPrice).toLocaleString()}</span>
-                                </div>
-                            </div>
-                            </div>
-                        </CardContent>
-                        </Card>
+                        <TokenCard key={token.id} token={token} />
                     ))}
                     </div>
                 </CardContent>
                 </Card>
             </TabsContent>
 
-            {/* Betting History Tab */}
+            {/* Betting History */}
             <TabsContent value="history">
-                <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
+                <Card className="bg-[#0f0f0f] border-white/10">
                 <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                     <History className="w-5 h-5 text-primary" />
@@ -380,13 +322,9 @@ export function Dashboard() {
                     <Table>
                         <TableHeader>
                         <TableRow className="border-white/10">
-                            <TableHead className="text-white/80">Date</TableHead>
-                            <TableHead className="text-white/80">Match</TableHead>
-                            <TableHead className="text-white/80">Bet</TableHead>
-                            <TableHead className="text-white/80">Stake</TableHead>
-                            <TableHead className="text-white/80">Odds</TableHead>
-                            <TableHead className="text-white/80">Result</TableHead>
-                            <TableHead className="text-white/80">Payout</TableHead>
+                            {["Date", "Match", "Bet", "Stake", "Odds", "Result", "Payout"].map((heading) => (
+                            <TableHead key={heading} className="text-white/80">{heading}</TableHead>
+                            ))}
                         </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -398,11 +336,11 @@ export function Dashboard() {
                             <TableCell className="text-white/80">${bet.stake}</TableCell>
                             <TableCell className="text-white/80">{bet.odds}</TableCell>
                             <TableCell>
-                                <Badge className={bet.result === 'Won' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}>
+                                <Badge className={bet.result === "Won" ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"}>
                                 {bet.result}
                                 </Badge>
                             </TableCell>
-                            <TableCell className={`font-bold ${bet.payout > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            <TableCell className={`font-bold ${bet.payout > 0 ? "text-green-500" : "text-red-500"}`}>
                                 ${bet.payout}
                             </TableCell>
                             </TableRow>
@@ -416,5 +354,69 @@ export function Dashboard() {
             </Tabs>
         </div>
         </div>
+    );
+    }
+
+    // Helper components for brevity
+    function StatCard({ title, value, icon }: { title: string; value: string | number; icon: React.ReactNode }) {
+    return (
+        <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
+        <CardContent className="p-4 flex justify-between items-center">
+            <div>
+            <p className="text-white/60 text-sm mb-1">{title}</p>
+            <p className="text-xl font-bold text-white">{value}</p>
+            </div>
+            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center">{icon}</div>
+        </CardContent>
+        </Card>
+    );
+    }
+
+    function TokenCard({ token }: { token: typeof mockFanTokens[0] }) {
+    return (
+        <Card className="bg-[#0f0f0f] border-white/10 hover:border-primary/30 transition-colors">
+        <CardContent className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+            <Avatar className="w-10 h-10">
+                <AvatarImage src={token.logo} alt={token.team} />
+                <AvatarFallback className="bg-primary/20 text-primary text-xs">
+                {token.symbol}
+                </AvatarFallback>
+            </Avatar>
+            <div>
+                <h3 className="font-bold text-white text-sm">{token.team}</h3>
+                <p className="text-white/60 text-xs">{token.symbol}</p>
+            </div>
+            </div>
+            <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+                <span className="text-white/60">Quantity</span>
+                <span className="text-white font-bold">{token.quantity}</span>
+            </div>
+            <div className="flex justify-between">
+                <span className="text-white/60">Price</span>
+                <span className="text-white font-bold">${token.currentPrice}</span>
+            </div>
+            <div className="flex justify-between items-center">
+                <span className="text-white/60">Change</span>
+                <div className="flex items-center gap-1">
+                {token.change > 0 ? (
+                    <TrendingUp className="w-3 h-3 text-green-500" />
+                ) : (
+                    <TrendingDown className="w-3 h-3 text-red-500" />
+                )}
+                <span className={`text-xs font-bold ${token.change > 0 ? "text-green-500" : "text-red-500"}`}>
+                    {token.change > 0 ? "+" : ""}
+                    {token.change}%
+                </span>
+                </div>
+            </div>
+            <div className="pt-2 border-t border-white/10 mt-2 flex justify-between">
+                <span className="text-white/60">Total Value</span>
+                <span className="text-white font-bold">${(token.quantity * token.currentPrice).toLocaleString()}</span>
+            </div>
+            </div>
+        </CardContent>
+        </Card>
     );
 }
