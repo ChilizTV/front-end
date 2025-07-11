@@ -6,7 +6,7 @@ export interface FanTokenData {
     name: string;
     symbol: string;
 }
-  
+
   // This represents one object in the FAN_TOKENS array
 export type FanTokenMap = {
 [teamName: string]: FanTokenData;

@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${lexend.className} antialiased`}
+        className={`${lexend.className} antialiased bg-black`}
       >
         <PrivyWrapper>
           {children}

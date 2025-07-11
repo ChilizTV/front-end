@@ -38,6 +38,13 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
         return 1;
     }
 
+    const handleBetting = (team: string, amount: string) => {
+        // Handle the betting logic here
+        console.log(`Bet placed: ${amount} on ${team}`);
+        // You can also update the message state to show confirmation
+        setMessage(`Bet of ${amount} placed on ${team}`);
+    };
+
     const isLoggedIn = wallets.length > 0;
     const walletAddress = isLoggedIn ? wallets[0]?.address : null;
     const displayAddress = walletAddress
@@ -108,7 +115,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                 isLoggedIn={isLoggedIn}
                 onLogin={login}
                 onBetPlaced={(team, amount) => {
-                console.log(`Bet placed from dialog: $${amount} USD on ${team}`);
+                    handleBetting(team, amount);
                 }}
                 TeamA={TeamA}
                 TeamB={TeamB}
