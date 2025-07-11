@@ -6,17 +6,17 @@ import Image from "next/image";
 type MatchStatus = "LIVE" | "BET_OPEN" | "ENDED";
 
 interface Match {
-  id: number;
-  teamA: string;
-  teamB: string;
-  score: string;
-  time: string;
-  logoA: string;
-  logoB: string;
-  status: MatchStatus;
-  startTime?: string;
-  viewers?: number;
-  league?: string;
+    id: number;
+    teamA: string;
+    teamB: string;
+    score: string;
+    time: string;
+    logoA: string;
+    logoB: string;
+    status: MatchStatus;
+    startTime?: string;
+    viewers?: number;
+    league?: string;
 }
 
 export default function LiveMatches() {

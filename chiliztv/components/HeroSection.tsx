@@ -66,7 +66,7 @@ export function HeroSection() {
                 style={{ fontFamily: 'Lexend, sans-serif' }}
                 onClick={() => {
                     if (authenticated) {
-                        window.location.href = "/dashboard";
+                        window.location.href = "/live";
                     } else {
                         login();
                     }

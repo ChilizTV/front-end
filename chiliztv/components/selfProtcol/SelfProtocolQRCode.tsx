@@ -22,6 +22,7 @@ export default function SelfProtocolQRCode({ onClose }: SelfProtocolQRCodeProps)
     const selfApp = new SelfAppBuilder({
         appName: "ChilizTV",
         scope: "chiliztv",
+        logoBase64: "https://chiliztv.vercel.app/chiliz_icon.png",
         endpoint: "https://chiliztv.vercel.app/api/verifier",
         endpointType: "staging_https",
         userId,
