@@ -19,6 +19,7 @@ import { CONTRACTS_ADDRESSES } from "@/utils/ContractsAddresses";
 import { parseEther } from "viem";
 import { BETTING_ABI } from "@/lib/abis/bettingAbi";
 import { useWallets } from "@privy-io/react-auth";
+import { ChatService } from "@/services/chat.service";
 
 interface BetDialogProps {
     isLoggedIn: boolean;
@@ -26,6 +27,10 @@ interface BetDialogProps {
     onBetPlaced?: (outcome: string, amount: string) => void;
     TeamA: string;
     TeamB: string;
+    matchId?: string;
+    userId?: string;
+    username?: string;
+    walletAddress?: string;
 }
 
 export default function BetDialog({
@@ -34,10 +39,15 @@ export default function BetDialog({
     onBetPlaced,
     TeamA,
     TeamB,
+    matchId,
+    userId,
+    username,
+    walletAddress,
 }: BetDialogProps) {
     const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
     const [betAmount, setBetAmount] = useState("");
     const [chzPrice, setChzPrice] = useState<number | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { wallets } = useWallets();
 
     const user = wallets?.[0]?.address ?? "";
@@ -136,17 +146,57 @@ export default function BetDialog({
         }
     };
 
-    // Handle successful transaction
     useEffect(() => {
         if (isConfirmed) {
             console.log(`Bet placed successfully: $${betAmount} on ${selectedTeam}`);
+            
+            if (matchId && userId && username && walletAddress) {
+                const sendBetToChat = async () => {
+                    try {
+                        const betType = "match_winner";
+                        let betSubType = "";
+                        
+                        if (selectedTeam === TeamA) {
+                            betSubType = "home";
+                        } else if (selectedTeam === "Draw") {
+                            betSubType = "draw";
+                        } else if (selectedTeam === TeamB) {
+                            betSubType = "away";
+                        }
+                        
+                        const odds = 2.5;
+                        
+                        const result = await ChatService.sendBetMessage(
+                            parseInt(matchId),
+                            userId,
+                            username,
+                            betType,
+                            betSubType,
+                            parseFloat(betAmount),
+                            odds,
+                            walletAddress
+                        );
+                        
+                        if (result.errorCode === 0) {
+                            console.log("✅ Bet sent to chat backend successfully");
+                            setIsDialogOpen(false);
+                            setSelectedTeam(null);
+                            setBetAmount("");
+                        } else {
+                            console.error("❌ Failed to send bet to chat backend");
+                        }
+                    } catch (error) {
+                        console.error("❌ Error sending bet to chat backend:", error);
+                    }
+                };
+                
+                sendBetToChat();
+            }
+            
             onBetPlaced?.(selectedTeam!, betAmount);
-            setSelectedTeam(null);
-            setBetAmount("");
         }
-    }, [isConfirmed, selectedTeam, betAmount, onBetPlaced]);
+    }, [isConfirmed, selectedTeam, betAmount, onBetPlaced, matchId, userId, username, walletAddress, TeamA, TeamB]);
 
-    // Handle errors
     useEffect(() => {
         if (error) {
             console.error("Transaction error:", error);
@@ -155,6 +205,14 @@ export default function BetDialog({
 
     const getTeamData = (team: string) =>
         FAN_TOKENS.find((token) => token[team])?.[team];
+
+    const handleDialogClose = (open: boolean) => {
+        setIsDialogOpen(open);
+        if (!open) {
+            setSelectedTeam(null);
+            setBetAmount("");
+        }
+    };
 
     const fetchCHZPrice = async () => {
         try {
@@ -177,7 +235,7 @@ export default function BetDialog({
     }, []);
 
     return (
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogTrigger asChild>
             <Button className="w-full bg-[var(--primary)] hover:bg-[var(--primary-foreground)] text-[var(--primary-foreground)] font-semibold shadow-md rounded-lg transition-transform duration-200 transform hover:scale-[1.05] flex items-center justify-center gap-2">
             <TrendingUp className="w-5 h-5" />
