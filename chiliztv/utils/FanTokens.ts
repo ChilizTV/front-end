@@ -54,6 +54,16 @@ export interface TokenWithBalance extends FanTokenData {
     change: number;
 }
 
+// Helper function to get all fan tokens as a flat array
+export const getAllFanTokens = (): (FanTokenData & { teamKey: string })[] => {
+    return FAN_TOKENS.flatMap(tokenMap => 
+        Object.entries(tokenMap).map(([teamKey, tokenData]) => ({
+            ...tokenData,
+            teamKey
+        }))
+    );
+};
+
 // Helper: Match team name to known token symbol
 export const getFanToken = (team: string): FanTokenData | undefined => {
     if (team.includes("Barcelona")) return flatFanTokenMap["BAR"];

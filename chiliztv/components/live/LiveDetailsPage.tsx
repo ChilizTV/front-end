@@ -28,11 +28,12 @@ const usernameColors: Record<string, string> = {
 
 export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const { login } = useLogin();
-    const { authenticated } = usePrivy();
+    const { authenticated, user } = usePrivy();
 
     const [message, setMessage] = useState("");
     const [TeamA, setTeamA] = useState("PSG");
     const [TeamB, setTeamB] = useState("JUV");
+    const [matchInProgress, ] = useState(false);
 
     const [commentators] = useState([
         { id: 1, name: "John Doe", image: "/commentators/john_doe.jpg", language: "English" },
@@ -76,6 +77,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const handleBetting = (team: string, amount: string) => {
         console.log(`Bet placed: ${amount} on ${team}`);
         setMessage(`Bet of $${amount} placed on ${team}`);
+        // Submit directly to the chat
     };
 
     const handleSendMessage = () => {
@@ -83,7 +85,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
 
         const newMsg: ChatMessage = {
         id: Date.now(),
-        user: "You",
+        user: authenticated ? String(user?.customMetadata?.username ?? "You") : "Guest",
         text: message.trim(),
         featured: isFeaturedNext,
         timestamp: getCurrentTimestamp(),
@@ -163,29 +165,63 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
         {/* Right Sidebar */}
         <div className="w-full md:w-[400px] border-l border-white/10 bg-zinc-950 flex flex-col h-screen md:h-auto">
             {/* Place Bet Panel */}
+              {/* Scores Display */}
             <div
-            className="
-                p-6 
-                border-b border-white/20 
-                bg-gradient-to-tr from-primary/80 to-primary/50 
-                shadow-lg 
-                rounded-b-xl
-                sticky top-0 md:static
-                z-20
-                flex-shrink-0
-            "
-            style={{ backdropFilter: "blur(10px)" }}
-            >
-            <div className="text-xl font-bold mb-3 text-white drop-shadow-lg">Place Bet</div>
-            <BetDialog
-                isLoggedIn={authenticated}
-                onLogin={login}
-                onBetPlaced={(team, amount) => {
-                handleBetting(team, amount);
-                }}
-                TeamA={TeamA}
-                TeamB={TeamB}
-            />
+                className="
+                    p-6 
+                    border-b border-white/20 
+                    bg-gradient-to-tr from-primary/80 to-primary/50 
+                    shadow-lg 
+                    rounded-b-xl
+                    sticky top-0 md:static
+                    z-20
+                    flex-shrink-0
+                "
+                style={{ backdropFilter: "blur(10px)" }}
+                >
+                <div className="flex justify-center items-center gap-6 mb-4 text-white font-semibold text-2xl select-none">
+                    <div className="flex items-center gap-2">
+                    <Image
+                        src={`/logos/${TeamA.toLowerCase()}.png`}
+                        alt={TeamA}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                    />
+                    <span>{TeamA}</span>
+                    <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">2</span>
+                    </div>
+                    <span className="text-yellow-400 font-bold">-</span>
+                    <div className="flex items-center gap-2">
+                    <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">1</span>
+                    <span>{TeamB}</span>
+                    <Image
+                        src={`/logos/${TeamB.toLowerCase()}.png`}
+                        alt={TeamB}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                    />
+                    </div>
+                </div>
+                {!matchInProgress ? (
+                    <>
+                    <div className="text-xl font-bold mb-3 text-white drop-shadow-lg">Place Bet</div>
+                    <BetDialog
+                        isLoggedIn={authenticated}
+                        onLogin={login}
+                        onBetPlaced={(team, amount) => {
+                        handleBetting(team, amount);
+                        }}
+                        TeamA={TeamA}
+                        TeamB={TeamB}
+                    />
+                    </>
+                ) : (
+                    <div className="text-center text-yellow-400 font-semibold py-6 select-none">
+                    Betting is closed while the match is in progress.
+                    </div>
+                )}
             </div>
 
             {/* Ad/Promo */}

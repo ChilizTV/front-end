@@ -139,8 +139,8 @@ export default function BetDialog({
             <div className="grid grid-cols-3 gap-4">
                 {[TeamA, "Draw", TeamB].map((team) => {
                 const data = getTeamData(team);
-                const symbol = team === "Draw" ? "Draw" : data?.symbol || team;
-                const image = team === "Draw" ? null : data?.image || "";
+                const symbol = team === "Draw" ? "Draw" : data?.symbol ?? team;
+                const image = team === "Draw" ? null : data?.image ?? "";
                 const isSelected = selectedTeam === symbol;
 
                 return (

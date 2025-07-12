@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLogin, usePrivy } from '@privy-io/react-auth';
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, TvIcon, User, X } from "lucide-react";
+import { Menu, Trophy, TvIcon, User, X } from "lucide-react";
 
 export function Header() {
     const router = useRouter();
@@ -43,14 +43,20 @@ export function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex flex-row gap-[38px] items-center text-[16px]">
-                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/")}>
+                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
                             <TvIcon /> 
                             <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
                                 Browse Matches
                             </button>
                         </div>
+                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/leaderboard")}>
+                            <Trophy />
+                            <button className="text-white/70 hover:text-white transition-colors cursor-pointer">
+                                Leaderboard
+                            </button>
+                        </div>
                         {authenticated && (
-                            <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
+                            <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                 <User />
                                 <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                     Profile
@@ -76,8 +82,8 @@ export function Header() {
                                     Login
                                 </Button>
                                 <Button
-                                    variant="outline"
-                                    className="border-white/20 hover:border-white hover:text-white"
+                                    variant="ghost"
+                                    className="hover:border-white text-white"
                                     onClick={() => login()}
                                 >
                                     Sign Up

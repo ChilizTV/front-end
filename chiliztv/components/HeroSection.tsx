@@ -48,13 +48,13 @@ export function HeroSection() {
                 <h1 className="text-[64px] md:text-[80px] lg:text-[96px] font-black text-white leading-[0.9] mb-6 drop-shadow-2xl" style={{ fontFamily: 'Lexend, sans-serif' }}>
                     Live Football.
                 <br />
-                <span className="text-primary drop-shadow-2xl">Live Betting.</span>
+                <span className="text-primary drop-shadow-2xl">Live ChilizTV.</span>
                 </h1>
                 <p className="text-[20px] md:text-[24px] lg:text-[28px] font-semibold text-white mb-6 drop-shadow-lg" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                    Experience the thrill of live action.
+                    The Ultimate Betting Chiliz Social Club.
                 </p>
                 <p className="text-[16px] md:text-[18px] text-white/95 leading-relaxed max-w-2xl mx-auto drop-shadow-md break-words" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                    Join thousands of fans betting on live football matches.
+                    Join thousands of fans betting on live football matches.<br />
                     And earn Fan Tokens to unlock exclusive rewards and experiences.
                 </p>
             </div>
