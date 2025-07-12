@@ -133,6 +133,20 @@ export interface IMatch {
     venue: string | null;
     referee: string | null;
     odds: ExtendedOdds;
+    teams?: {
+        home?: {
+            id: number;
+            name: string;
+            logo: string;
+            winner?: boolean;
+        };
+        away?: {
+            id: number;
+            name: string;
+            logo: string;
+            winner?: boolean;
+        };
+    };
 }
 
 export type IMatchId = IMatch & { id: number };

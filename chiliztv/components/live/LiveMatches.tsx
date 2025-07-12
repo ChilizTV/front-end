@@ -92,8 +92,8 @@ export default function LiveMatches() {
                         ...match,
                         displayStatus: status,
                         time,
-                        logoA: getTeamLogo(match.home_team),
-                        logoB: getTeamLogo(match.away_team),
+                        logoA: match.teams?.home?.logo || getTeamLogo(match.home_team),
+                        logoB: match.teams?.away?.logo || getTeamLogo(match.away_team),
                         viewers: status === "LIVE" ? Math.floor(Math.random() * 3000000) + 500000 : undefined
                     };
                 });
