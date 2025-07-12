@@ -17,14 +17,6 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
     const [isNextFeatured, setIsNextFeatured] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
     useEffect(() => {
         const fetchMessages = async () => {
             try {
