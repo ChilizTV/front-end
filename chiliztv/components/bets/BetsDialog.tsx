@@ -61,7 +61,6 @@ export default function BetDialog({
                 return;
             }
 
-
             writeContract({
                 address: CONTRACTS_ADDRESSES.betting,
                 abi: BETTING_ABI,
