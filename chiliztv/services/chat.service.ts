@@ -37,12 +37,13 @@ export class ChatService {
         }
     }
 
-    static async sendMessage(matchId: number, userId: string, username: string, message: string): Promise<ServiceResult<ChatMessage>> {
+    static async sendMessage(matchId: number, userId: string, username: string, message: string, walletAddress: string): Promise<ServiceResult<ChatMessage>> {
         try {
             const res = await axios.post(`${ApiService.baseURL}/chat/message/${matchId}`, {
                 userId,
                 username,
-                message
+                message,
+                walletAddress
             });
             if (res.status === 200) {
                 return ServiceResult.success(res.data.data);
@@ -61,7 +62,8 @@ export class ChatService {
         betType: string, 
         betSubType: string, 
         amount: number, 
-        odds: number
+        odds: number,
+        walletAddress: string
     ): Promise<ServiceResult<BetMessage>> {
         try {
             const res = await axios.post(`${ApiService.baseURL}/chat/bet/${matchId}`, {
@@ -70,7 +72,8 @@ export class ChatService {
                 betType,
                 betSubType,
                 amount,
-                odds
+                odds,
+                walletAddress
             });
             if (res.status === 200) {
                 return ServiceResult.success(res.data.data);
