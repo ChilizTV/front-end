@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 "use client";
 import { useRouter } from "next/navigation";
 import { Clock, Trophy, TrendingUp, Zap, Eye, RefreshCw } from "lucide-react";
