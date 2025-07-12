@@ -14,10 +14,11 @@ import Image from "next/image";
 import { FAN_TOKENS } from "@/utils/FanTokens";
 import { TrendingUp } from "lucide-react";
 import { getCHZPricePyth } from "@/app/actions/getCHZPricePyth";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagmi";
 import { CONTRACTS_ADDRESSES } from "@/utils/ContractsAddresses";
 import { parseEther } from "viem";
 import { BETTING_ABI } from "@/lib/abis/bettingAbi";
+import { useWallets } from "@privy-io/react-auth";
 
 interface BetDialogProps {
     isLoggedIn: boolean;
@@ -37,49 +38,121 @@ export default function BetDialog({
     const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
     const [betAmount, setBetAmount] = useState("");
     const [chzPrice, setChzPrice] = useState<number | null>(null);
-    const maxAmount = 22; // Example max amount, can be dynamic
+    const { wallets } = useWallets();
+
+    const user = wallets?.[0]?.address ?? "";
+
+    const { data: balanceData } = useBalance({
+        address: user as `0x{string}`,
+    });
+
+    console.log("User balance :", balanceData?.formatted);
+
+    // const finalAmount = Number(betAmount) * (chzPrice ?? 1);
+
+    // Calculate max amount based on user's balance and CHZ price
+    const maxAmount = balanceData ? 
+        (Number(balanceData.formatted) * chzPrice!) : 0;
 
     const {
-        writeContract 
-      } = useWriteContract() 
+        writeContract,
+        data: hash,
+        error,
+        isPending
+    } = useWriteContract();
 
+    const { isLoading: isConfirming, isSuccess: isConfirmed } =
+        useWaitForTransactionReceipt({
+            hash,
+        });
 
+    // Helper function to convert team selection to contract outcome format
+    const getOutcomeIndex = (teamSymbol: string): bigint => {
+        const teamAData = getTeamData(TeamA);
+        const teamBData = getTeamData(TeamB);
+        const teamASymbol = teamAData?.symbol ?? TeamA;
+        const teamBSymbol = teamBData?.symbol ?? TeamB;
+        
+        if (teamSymbol === teamASymbol) {
+            return BigInt(1);
+        } else if (teamSymbol === "Draw") {
+            return BigInt(2);
+        } else if (teamSymbol === teamBSymbol) {
+            return BigInt(3);
+        }
+        
+        throw new Error(`Unknown team symbol: ${teamSymbol}`);
+    };
 
-    const handleBet = () => {
-        if (selectedTeam && betAmount.trim()) {
-        console.log(`Bet placed: $${betAmount} USD on ${selectedTeam}`);
-        onBetPlaced?.(selectedTeam, betAmount);
-        setSelectedTeam(null);
-        setBetAmount("");
+    const handleBet = async () => {
+        if (!isLoggedIn) {
+            console.error("User is not logged in");
+            onLogin();
+            return;
+        }
+    
+        if (!selectedTeam || !betAmount.trim()) {
+            console.error("Please select a team and enter a bet amount");
+            return;
+        }
+    
+        if (!chzPrice) {
+            console.error("CHZ price not loaded");
+            return;
+        }
 
-        // convert outcome to lowercase for consistency
-        const outcome = selectedTeam.toLowerCase() === "draw" ? "draw" : selectedTeam.toLowerCase();
-        // Call the smart contract function to place the bet
-        if (isLoggedIn) {
-            if (isNaN(parseFloat(betAmount)) || parseFloat(betAmount) <= 0) {
-                console.error("Invalid bet amount");
-                return;
-            }
+        // Convert USD amount to CHZ amount
+        const chzAmount = Number(betAmount) / chzPrice;
+        
+        // Parse the CHZ amount to wei (18 decimals)
+        const parsedAmount = parseEther(chzAmount.toString());
+        
+        if (parsedAmount <= 0) {
+            console.error("Invalid bet amount");
+            return;
+        }
+    
+        try {
+            const outcomeIndex = getOutcomeIndex(selectedTeam);
+    
+            console.log("Placing bet with:", {
+                outcomeIndex: outcomeIndex.toString(),
+                amountInUSD: betAmount,
+                amountInCHZ: chzAmount.toString(),
+                amountInWei: parsedAmount.toString(),
+                contractAddress: CONTRACTS_ADDRESSES.betting,
+                selectedTeam
+            });
 
             writeContract({
                 address: CONTRACTS_ADDRESSES.betting,
                 abi: BETTING_ABI,
-                functionName: 'placeBet',
-                args: [outcome, parseEther(betAmount)],
-            })
-            }
-            else {
-                console.error("User is not logged in");
-                onLogin();
-            }
-
-        }
-        else {
-        console.error("Please select a team and enter a bet amount");
+                functionName: "placeBet",
+                args: [outcomeIndex, parsedAmount], // Now using parsedAmount (BigInt)
+                // Add value if the contract requires ETH to be sent
+                // value: parsedAmount,
+            });
+        } catch (err) {
+            console.error("Error placing bet:", err);
         }
     };
 
+    // Handle successful transaction
+    useEffect(() => {
+        if (isConfirmed) {
+            console.log(`Bet placed successfully: $${betAmount} on ${selectedTeam}`);
+            onBetPlaced?.(selectedTeam!, betAmount);
+            setSelectedTeam(null);
+            setBetAmount("");
+        }
+    }, [isConfirmed, selectedTeam, betAmount, onBetPlaced]);
 
+    // Handle errors
+    useEffect(() => {
+        if (error) {
+            console.error("Transaction error:", error);
+        }
+    }, [error]);
 
     const getTeamData = (team: string) =>
         FAN_TOKENS.find((token) => token[team])?.[team];
@@ -236,15 +309,26 @@ export default function BetDialog({
             </div>
             </div>
 
+            {/* Error Display */}
+            {error && (
+                <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    <p className="text-sm">Error: {error.message}</p>
+                </div>
+            )}
+
             {/* Footer */}
             <DialogFooter className="mt-10">
             {isLoggedIn ? (
                 <Button
-                disabled={!selectedTeam || !betAmount.trim()}
+                disabled={!selectedTeam || !betAmount.trim() || isPending || isConfirming || !chzPrice}
                 onClick={handleBet}
                 className="w-full h-14 text-lg font-semibold bg-primary hover:bg-[var(--accent-foreground)] disabled:bg-[var(--muted)] disabled:text-[var(--muted-foreground)] rounded-xl transition-colors duration-200"
                 >
-                {selectedTeam && betAmount.trim() ? (
+                {isPending ? (
+                    "Confirming..."
+                ) : isConfirming ? (
+                    "Processing..."
+                ) : selectedTeam && betAmount.trim() ? (
                     <span className="flex items-center justify-center gap-2">
                     Confirm ${betAmount} on {selectedTeam}
                     </span>
