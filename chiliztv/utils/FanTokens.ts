@@ -3,12 +3,12 @@ export interface FanTokenData {
     image: string;
     name: string;
     symbol: string;
-    tokenAddress?: string; // Optional, as not all tokens may have an address
-    testnetTokenAddress?: string; // Optional, for testnet tokens
+    tokenAddress?: string;
+    testnetTokenAddress?: string;
 }
 
 export type FanTokenMap = {
-[teamName: string]: FanTokenData;
+    [teamName: string]: FanTokenData;
 };
 
 export const FAN_TOKENS: FanTokenMap[] = [
@@ -20,23 +20,44 @@ export const FAN_TOKENS: FanTokenMap[] = [
     symbol: "PSG",
     tokenAddress: "0x0b8f3c1d2e6a4b5c7f8e9d1a2b3c4d5e6f7g8h9i",
     },
-},
-{
-    JUV: {
-    link: "https://www.socios.com/juventus",
-    image:
-        "https://coin-images.coingecko.com/coins/images/10060/large/JUV.png?1741579269",
-    name: "Juventus Fan Token",
-    symbol: "JUV",
     },
-},
-{
-    BAR: {
-    link: "https://www.socios.com/fcbarcelona",
-    image: "https://cdn.socios.com/club/fcbarcelona.png",
-    name: "FC Barcelona Fan Token",
-    symbol: "BAR",
+    {
+        JUV: {
+            link: "https://www.socios.com/juventus",
+            image:
+            "https://coin-images.coingecko.com/coins/images/10060/large/JUV.png?1741579269",
+            name: "Juventus Fan Token",
+            symbol: "JUV",
+        },
     },
-},
+    {
+        BAR: {
+            link: "https://www.socios.com/fcbarcelona",
+            image: "https://www.fantokens.com/_next/image?url=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Ffmc-27374.appspot.com%2Fo%2Ftokens%252F2eb02bcb-52c0-480e-9f18-5dc046a5dc04%3Falt%3Dmedia%26token%3Dfe0f8094-7530-450b-8f54-74ef73c4d845&w=48&q=75",
+            name: "FC Barcelona Fan Token",
+            symbol: "BAR",
+        },
+        },
 ];
-  
+
+// Flatten FAN_TOKENS for easy lookup
+const flatFanTokenMap: FanTokenMap = FAN_TOKENS.reduce((acc, obj) => {
+    const key = Object.keys(obj)[0];
+    acc[key] = obj[key];
+    return acc;
+}, {} as FanTokenMap);
+
+export interface TokenWithBalance extends FanTokenData {
+    id: number;
+    quantity: number;
+    currentPrice: number;
+    change: number;
+}
+
+// Helper: Match team name to known token symbol
+export const getFanToken = (team: string): FanTokenData | undefined => {
+    if (team.includes("Barcelona")) return flatFanTokenMap["BAR"];
+    if (team.includes("Juventus")) return flatFanTokenMap["JUV"];
+    if (team.includes("PSG")) return flatFanTokenMap["PSG"];
+    return undefined;
+};

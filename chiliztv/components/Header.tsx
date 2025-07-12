@@ -6,12 +6,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useLogin, usePrivy } from '@privy-io/react-auth';
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, TvIcon, User, X } from "lucide-react";
 
 export function Header() {
     const router = useRouter();
     const { login } = useLogin();
-    const { ready, authenticated, logout } = usePrivy();
+    const { ready, authenticated } = usePrivy();
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -43,13 +43,19 @@ export function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex flex-row gap-[38px] items-center text-[16px]">
-                        <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
-                            Browse Matches
-                        </button>
-                        {authenticated && (
-                            <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
-                                Profile
+                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/")}>
+                            <TvIcon /> 
+                            <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
+                                Browse Matches
                             </button>
+                        </div>
+                        {authenticated && (
+                            <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
+                                <User />
+                                <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
+                                    Profile
+                                </button>
+                            </div>
                         )}
                     </nav>
 
@@ -78,7 +84,6 @@ export function Header() {
                                 </Button>
                             </>
                         ) : (
-                            <>
                                 <Button
                                     variant="outline"
                                     className="border-white/20 bg-primary text-white"
@@ -86,14 +91,6 @@ export function Header() {
                                 >
                                     Dashboard
                                 </Button>
-                                <Button
-                                    variant="secondary"
-                                    className="border-white/20 hover:border-white hover:text-white"
-                                    onClick={() => logout()}
-                                >
-                                    Disconnect
-                                </Button>
-                            </>
                         )}
                     </div>
                 </div>
@@ -131,7 +128,6 @@ export function Header() {
                             )}
                             <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
                                 {authenticated ? (
-                                    <>
                                         <Button
                                             variant="outline"
                                             className="border-white/20 bg-primary text-white"
@@ -142,17 +138,6 @@ export function Header() {
                                         >
                                             Dashboard
                                         </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="border-white/20 hover:border-white hover:text-white"
-                                            onClick={() => {
-                                                logout();
-                                                setMenuOpen(false);
-                                            }}
-                                        >
-                                            Disconnect
-                                        </Button>
-                                    </>
                                 ) : (
                                     <>
                                         <Button

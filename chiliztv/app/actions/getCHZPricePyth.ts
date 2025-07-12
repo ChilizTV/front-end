@@ -10,16 +10,8 @@ const priceIds = [
   "0xe799f456b358a2534aa1b45141d454ac04b444ed23b1440b778549bb758f2b5c", // CHZ/USD price id
 ];
 
-// Get price feeds
-const priceFeeds = await connection.getPriceFeeds({
-    query: "chz",
-    assetType: "crypto",
-});
-console.log(priceFeeds);
-
 // Latest price updates
 const priceUpdates = await connection.getLatestPriceUpdates(priceIds);
-console.log(priceUpdates);
 
 return priceUpdates;
 }

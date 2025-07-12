@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -43,10 +43,11 @@ import {
 } from "lucide-react";
 
 import SelfProtocolQRCode from "../selfProtcol/SelfProtocolQRCode";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 // Mock data
 const mockUser = {
-    username: "FootballFan2024",
+    username: "",
     walletAddress: "0x742d35Cc6634C0532925a3b8D3Ac92d9d3456789",
     totalTokens: 15,
     totalBets: 127,
@@ -159,16 +160,69 @@ export function Dashboard() {
     const [username, setUsername] = useState(mockUser.username);
     const [tempUsername, setTempUsername] = useState(username);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
     const [showVerificationDialog, setShowVerificationDialog] = useState(false);
 
-    const handleUsernameUpdate = () => {
-        const newUsername = tempUsername.trim();
-        if (newUsername && newUsername !== username) {
-        setUsername(newUsername);
-        console.log(`Username updated to: ${newUsername}`);
+    const { user, authenticated} = usePrivy();
+    const { wallets } = useWallets();
+
+    useEffect(() => {
+        if (user?.customMetadata?.username && !username) {
+            const usernameValue = typeof user.customMetadata.username === "string" ? user.customMetadata.username : "";
+            setUsername(usernameValue);
+            setTempUsername(usernameValue);
         }
-        setIsDialogOpen(false);
-    };
+    }, [user, username]);
+
+    async function handleUsernameUpdate() {
+        const newUsername = tempUsername.trim();
+
+        if (!newUsername || newUsername === username) {
+            setIsDialogOpen(false);
+            return;
+        }
+    
+        setIsLoading(true);
+        setError(null);
+
+        if (!authenticated || !user) {
+            setError("You must be logged in to update your username.");
+            setIsLoading(false);
+            return;
+        }
+    
+        try {
+            const response = await fetch("/api/username/update", {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    userDid: user.id, // user's DID from Privy
+                    customMetadata: { username: newUsername, isVerified: true }, // send as customMetadata
+                }),
+            });
+        
+            const data = await response.json();
+        
+            if (!response.ok) {
+                throw new Error(data.reason ?? "Failed to update username");
+            }
+    
+            setUsername(newUsername);
+            console.log(`Username updated to: ${newUsername}`);
+            setIsDialogOpen(false);
+      }
+        catch (error) {
+            console.error("Error updating username:", error);
+            setError(error instanceof Error ? error.message : "An unexpected error occurred");
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const totalTokenValue = mockFanTokens.reduce(
         (sum, token) => sum + token.quantity * token.currentPrice,
@@ -185,7 +239,7 @@ export function Dashboard() {
                 Profile
                 </h1>
                 <p className="text-white/70 text-sm">
-                Welcome back, {username}
+                Welcome back, {user?.customMetadata?.username ?? username}!
                 </p>
             </div>
             <div className="flex items-center gap-2">
@@ -193,13 +247,14 @@ export function Dashboard() {
                 VIP Member
             </Badge>
             <Button
-                variant="default"
+                variant="ghost"
                 size="sm"
-                className="text-xs text-white/70 hover:text-white underline px-1"
+                className="text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors duration-150 rounded-full px-3 py-1"
                 onClick={() => setShowVerificationDialog(true)}
             >
-                Get Verified
+            Verify to Withdraw
             </Button>
+
             {showVerificationDialog && (
                 <SelfProtocolQRCode onClose={() => setShowVerificationDialog(false)} />
             )}
@@ -226,37 +281,68 @@ export function Dashboard() {
                             <Edit className="w-4 h-4" />
                             </Button>
                         </DialogTrigger>
-                        <DialogContent className="bg-[#1a1919] border-white/10">
-                            <DialogHeader>
-                            <DialogTitle className="text-white" style={{ fontFamily: 'Lexend, sans-serif' }}>
-                                Update Username
-                            </DialogTitle>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                            <div>
-                                <Label htmlFor="username" className="text-white/80">New Username</Label>
-                                <Input
-                                id="username"
-                                value={tempUsername}
-                                onChange={(e) => setTempUsername(e.target.value)}
-                                className="bg-white/5 border-white/10 text-white"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <Button onClick={handleUsernameUpdate} className="bg-primary hover:bg-primary/90">
-                                Update
-                                </Button>
-                                <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="border-white/20 text-white">
-                                Cancel
-                                </Button>
-                            </div>
-                            </div>
+                        <DialogContent className="bg-[#1a1919] border border-white/20 rounded-lg max-w-md mx-auto">
+  <DialogHeader className="pb-2 border-b border-white/10">
+    <DialogTitle className="text-white text-lg font-semibold" style={{ fontFamily: 'Lexend, sans-serif' }}>
+      Update Username
+    </DialogTitle>
+  </DialogHeader>
+
+  <div className="mt-4 space-y-4">
+    <div>
+      <Label htmlFor="username" className="text-white/80 mb-1 block font-medium">
+        New Username
+      </Label>
+      <Input
+        id="username"
+        value={tempUsername}
+        onChange={(e) => setTempUsername(e.target.value)}
+        className="bg-white/10 border-white/30 text-white placeholder-white/50 focus:border-primary focus:ring-primary"
+        placeholder="Enter your new username"
+        disabled={isLoading}
+        autoFocus
+      />
+    </div>
+
+    {error && (
+      <p className="text-sm text-red-500 font-medium select-none" role="alert">
+        {error}
+      </p>
+    )}
+
+    <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsDialogOpen(false);
+          setTempUsername(username); // reset on cancel
+          setError(null);
+        }}
+        disabled={isLoading}
+        className="border-white/30 text-white/70 hover:text-white hover:border-primary transition"
+      >
+        Cancel
+      </Button>
+
+      <Button
+        onClick={handleUsernameUpdate}
+        disabled={isLoading || tempUsername.trim() === "" || tempUsername === username}
+        className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? "Updating..." : "Update"}
+      </Button>
+    </div>
+  </div>
                         </DialogContent>
                         </Dialog>
                     </div>
                     <div className="text-white/60 text-sm font-mono truncate max-w-[220px]">
                         <Wallet className="inline-block w-4 h-4 mr-1" />
-                        {mockUser.walletAddress}
+                        {wallets.length > 0 ? (
+                        wallets[0].address
+                        ) : (
+                        <span className="text-red-500">No wallet connected</span>
+                        )}
                     </div>
                     <div className="text-sm text-white/70 flex gap-4 mt-1">
                         <div className="flex items-center gap-1">

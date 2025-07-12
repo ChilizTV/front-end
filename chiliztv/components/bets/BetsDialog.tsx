@@ -105,7 +105,7 @@ export default function BetDialog({
                     bg-transparent
                     text-[var(--foreground)]
                     placeholder-[var(--muted-foreground)]
-                    text-left
+                    text-center  /* changed from text-left */
                     outline-none
                     border-none
                     ring-0
@@ -120,6 +120,7 @@ export default function BetDialog({
                     [&::-webkit-outer-spin-button]:appearance-none
                 "
                 />
+
             </div>
 
             {chzPrice && betAmount && !isNaN(Number(betAmount)) && (
