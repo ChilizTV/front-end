@@ -48,6 +48,8 @@ export default function BetDialog({
     const [betAmount, setBetAmount] = useState("");
     const [chzPrice, setChzPrice] = useState<number | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [fanTokenBalance, setFanTokenBalance] = useState<number>(0);
+    const [tokenBreakdown, setTokenBreakdown] = useState<{ [key: string]: number }>({});
     const { wallets } = useWallets();
 
     const user = wallets?.[0]?.address ?? "";
@@ -58,9 +60,51 @@ export default function BetDialog({
 
     console.log("User balance :", balanceData?.formatted);
 
-    // const finalAmount = Number(betAmount) * (chzPrice ?? 1);
+    useEffect(() => {
+        const fetchUserFanTokens = async () => {
+            if (walletAddress && walletAddress !== "" && isDialogOpen) {
+                try {
+                    const result = await ChatService.getUserTokenBalances(walletAddress);
+                    if (result.errorCode === 0 && result.result) {
+                        // Handle the new UserTokenBalance structure
+                        const userBalance = result.result as {
+                            walletAddress: string;
+                            totalBalance: number;
+                            tokenBalances: Array<{
+                                token: { symbol: string };
+                                balance: number;
+                            }>;
+                            isFeatured: boolean;
+                        };
+                        
+                        const totalTokens = userBalance.totalBalance;
+                        const balances: { [key: string]: number } = {};
+                        
+                        userBalance.tokenBalances.forEach(tokenBalance => {
+                            balances[tokenBalance.token.symbol] = tokenBalance.balance;
+                        });
+                        
+                        setFanTokenBalance(totalTokens);
+                        setTokenBreakdown(balances);
+                        console.log("💰 Total fan tokens for user:", totalTokens);
+                        console.log("📊 User token breakdown:", Object.entries(balances).map(([symbol, balance]) => `${symbol}: ${balance}`));
+                    } else {
+                        console.log("❌ Failed to fetch user fan tokens");
+                        setFanTokenBalance(0);
+                        setTokenBreakdown({});
+                    }
+                } catch (error) {
+                    console.error("❌ Error fetching user fan tokens:", error);
+                    setFanTokenBalance(0);
+                    setTokenBreakdown({});
+                }
+            }
+        };
 
-    // Calculate max amount based on user's balance and CHZ price
+        fetchUserFanTokens();
+    }, [walletAddress, isDialogOpen]);
+
+
     const maxAmount = balanceData ? 
         (Number(balanceData.formatted) * chzPrice!) : 0;
 
@@ -83,12 +127,25 @@ export default function BetDialog({
         const teamASymbol = teamAData?.symbol ?? TeamA;
         const teamBSymbol = teamBData?.symbol ?? TeamB;
         
+        // Handle half-time bets
+        if (teamSymbol.includes(" HT")) {
+            const baseSymbol = teamSymbol.replace(" HT", "");
+            if (baseSymbol === teamASymbol) {
+                return BigInt(4); // Home HT win
+            } else if (baseSymbol === "Draw") {
+                return BigInt(5); // Draw HT
+            } else if (baseSymbol === teamBSymbol) {
+                return BigInt(6); // Away HT win
+            }
+        }
+        
+        // Handle full-time bets
         if (teamSymbol === teamASymbol) {
-            return BigInt(1);
+            return BigInt(1); // Home win
         } else if (teamSymbol === "Draw") {
-            return BigInt(2);
+            return BigInt(2); // Draw
         } else if (teamSymbol === teamBSymbol) {
-            return BigInt(3);
+            return BigInt(3); // Away win
         }
         
         throw new Error(`Unknown team symbol: ${teamSymbol}`);
@@ -150,18 +207,32 @@ export default function BetDialog({
         if (isConfirmed) {
             console.log(`Bet placed successfully: $${betAmount} on ${selectedTeam}`);
             
-            if (matchId && userId && username && walletAddress) {
+            if (matchId && userId && username && walletAddress && selectedTeam) {
                 const sendBetToChat = async () => {
                     try {
-                        const betType = "match_winner";
+                        let betType = "match_winner";
                         let betSubType = "";
                         
-                        if (selectedTeam === TeamA) {
-                            betSubType = "home";
-                        } else if (selectedTeam === "Draw") {
-                            betSubType = "draw";
-                        } else if (selectedTeam === TeamB) {
-                            betSubType = "away";
+                        // Handle half-time bets
+                        if (selectedTeam.includes(" HT")) {
+                            betType = "first_half_winner";
+                            const baseSymbol = selectedTeam.replace(" HT", "");
+                            if (baseSymbol === TeamA) {
+                                betSubType = "home";
+                            } else if (baseSymbol === "Draw") {
+                                betSubType = "draw";
+                            } else if (baseSymbol === TeamB) {
+                                betSubType = "away";
+                            }
+                        } else {
+                            // Handle full-time bets
+                            if (selectedTeam === TeamA) {
+                                betSubType = "home";
+                            } else if (selectedTeam === "Draw") {
+                                betSubType = "draw";
+                            } else if (selectedTeam === TeamB) {
+                                betSubType = "away";
+                            }
                         }
                         
                         const odds = 2.5;
@@ -243,11 +314,36 @@ export default function BetDialog({
             </Button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-md bg-[var(--background)] rounded-xl border border-[var(--border)] shadow-lg p-8 text-[var(--foreground)]">
+        <DialogContent className="max-w-md bg-[var(--background)] rounded-xl border border-[var(--border)] shadow-lg p-8 text-[var(--foreground)] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
             <DialogTitle className="text-3xl font-extrabold text-center mb-8">
                 Place Your Bet
             </DialogTitle>
+            
+            {/* Fan Token Balance Display */}
+            {isLoggedIn && fanTokenBalance > 0 && (
+                <div className="mb-6 p-3 bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-lg">
+                    <div className="text-center">
+                        <div className="text-sm font-semibold text-yellow-400 mb-1">
+                            🏆 Your Fan Tokens
+                        </div>
+                        <div className="text-lg font-bold text-yellow-300 mb-2">
+                            {fanTokenBalance.toLocaleString()} tokens
+                        </div>
+                        {Object.keys(tokenBreakdown).length > 0 && (
+                            <div className="text-xs text-yellow-200/80">
+                                {Object.entries(tokenBreakdown)
+                                    .filter(([_, balance]) => balance > 0)
+                                    .map(([symbol, balance]) => (
+                                        <span key={symbol} className="inline-block mr-2 mb-1">
+                                            {symbol}: {balance.toLocaleString()}
+                                        </span>
+                                    ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
             </DialogHeader>
 
             {/* Amount Input */}
@@ -360,6 +456,91 @@ export default function BetDialog({
                         </div>
                     )}
                     <span className="text-lg font-semibold tracking-wide">{symbol}</span>
+                    </button>
+                );
+                })}
+            </div>
+            </div>
+
+            {/* Half-Time Betting Section */}
+            <div className="mt-8 pt-6 border-t border-[var(--border)]">
+            <p className="text-center text-sm font-semibold text-[var(--muted-foreground)] mb-5">
+                🕐 Half-Time Result
+            </p>
+            
+            {/* Fan Token Requirement Message */}
+            {isLoggedIn && fanTokenBalance < 50 && (
+                <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                    <div className="text-center">
+                        <div className="text-sm font-semibold text-amber-400 mb-1">
+                            🔒 Half-Time Betting Locked
+                        </div>
+                        <div className="text-xs text-amber-300/80">
+                            You need at least 50 fan tokens to access half-time betting.
+                            <br />
+                            Your current balance: <span className="font-bold">{fanTokenBalance.toLocaleString()}</span> fan tokens
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div className="grid grid-cols-3 gap-4">
+                {[`${TeamA} HT`, "Draw HT", `${TeamB} HT`].map((team) => {
+                const data = getTeamData(team.replace(" HT", ""));
+                const symbol = team === "Draw HT" ? "Draw HT" : data?.symbol ? `${data.symbol} HT` : team;
+                const image = team === "Draw HT" ? null : data?.image ?? "";
+                const isSelected = selectedTeam === symbol;
+                const isDisabled = isLoggedIn && fanTokenBalance < 50;
+
+                return (
+                    <button
+                    key={team}
+                    onClick={() => !isDisabled && setSelectedTeam(symbol)}
+                    disabled={isDisabled}
+                    className={`flex flex-col items-center justify-center gap-3 py-4 rounded-xl border transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]
+                        ${
+                        isSelected
+                            ? "bg-[var(--accent)] border-[var(--accent-foreground)] text-[var(--accent-foreground)] shadow-md"
+                            : isDisabled
+                            ? "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] opacity-50 cursor-not-allowed"
+                            : "bg-[var(--muted)] border-[var(--border)] text-[var(--muted-foreground)] hover:bg-[var(--muted-foreground)/10] hover:border-[var(--accent)]"
+                        }`}
+                    aria-pressed={isSelected}
+                    >
+                    {image ? (
+                        <div
+                        className={`p-2 rounded-full transition-colors duration-200 ${
+                            isSelected
+                            ? "bg-[var(--accent-foreground)]"
+                            : isDisabled
+                            ? "bg-[var(--muted-foreground)] opacity-50"
+                            : "bg-[var(--muted-foreground)]"
+                        }`}
+                        >
+                        <Image
+                            src={image}
+                            alt={`${team} Logo`}
+                            width={24}
+                            height={24}
+                            className="rounded-full"
+                        />
+                        </div>
+                    ) : (
+                        <div
+                        className={`text-xs font-bold px-3 py-1 rounded-full ${
+                            isSelected
+                            ? "bg-[var(--accent-foreground)] text-[var(--background)]"
+                            : isDisabled
+                            ? "bg-[var(--muted-foreground)] text-[var(--foreground)] opacity-50"
+                            : "bg-[var(--muted-foreground)] text-[var(--foreground)]"
+                        }`}
+                        >
+                        DRAW
+                        </div>
+                    )}
+                    <span className={`text-sm font-semibold tracking-wide text-center ${
+                        isDisabled ? "opacity-50" : ""
+                    }`}>{symbol}</span>
                     </button>
                 );
                 })}

@@ -23,7 +23,6 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
         const fetchMessages = async () => {
             try {
                 const result = await ChatService.getRoomMessages(parseInt(matchId));
-                console.log(result)
                 if (result.errorCode === 0 && result.result) {
                     const extendedMessages: ChatMessage[] = result.result.map(msg => ({
                         ...msg,

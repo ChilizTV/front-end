@@ -169,6 +169,19 @@ export function Dashboard() {
     const { user, authenticated} = usePrivy();
     const { wallets } = useWallets();
 
+    const [isClient, setIsClient] = useState(false);
+
+    // Fix hydration issues by ensuring we're on client side
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    // Custom number formatting function that doesn't depend on locale
+    const formatNumber = (num: number) => {
+        if (!isClient) return num.toString(); // Return simple string on server
+        return num.toLocaleString('en-US'); // Use consistent locale on client
+    };
+
     useEffect(() => {
         if (user?.customMetadata?.username && !username) {
             const usernameValue = typeof user.customMetadata.username === "string" ? user.customMetadata.username : "";
@@ -354,7 +367,7 @@ export function Dashboard() {
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-2xl font-bold text-green-400">${mockUser.totalWinnings.toLocaleString()}</p>
+                    <p className="text-2xl font-bold text-green-400">${formatNumber(mockUser.totalWinnings)}</p>
                     <p className="text-sm text-white/60">Total Winnings</p>
                 </div>
                 </div>
@@ -364,7 +377,7 @@ export function Dashboard() {
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <StatCard title="Fan Tokens" value={mockUser.totalTokens} icon={<Trophy className="w-6 h-6 text-primary" />} />
-            <StatCard title="Portfolio Value" value={`$${totalTokenValue.toLocaleString()}`} icon={<TrendingUp className="w-6 h-6 text-green-500" />} />
+            <StatCard title="Portfolio Value" value={`$${formatNumber(totalTokenValue)}`} icon={<TrendingUp className="w-6 h-6 text-green-500" />} />
             <StatCard title="Active Bets" value={7} icon={<History className="w-6 h-6 text-blue-500" />} />
             </div>
 
@@ -387,7 +400,7 @@ export function Dashboard() {
                 <CardContent>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {mockFanTokens.map((token) => (
-                        <TokenCard key={token.id} token={token} />
+                        <TokenCard key={token.id} token={token} formatNumber={formatNumber} />
                     ))}
                     </div>
                 </CardContent>
@@ -458,7 +471,7 @@ export function Dashboard() {
     );
     }
 
-    function TokenCard({ token }: { token: typeof mockFanTokens[0] }) {
+    function TokenCard({ token, formatNumber }: { token: typeof mockFanTokens[0]; formatNumber: (num: number) => string }) {
     return (
         <Card className="bg-[#0f0f0f] border-white/10 hover:border-primary/30 transition-colors">
         <CardContent className="p-4">
@@ -499,7 +512,7 @@ export function Dashboard() {
             </div>
             <div className="pt-2 border-t border-white/10 mt-2 flex justify-between">
                 <span className="text-white/60">Total Value</span>
-                <span className="text-white font-bold">${(token.quantity * token.currentPrice).toLocaleString()}</span>
+                <span className="text-white font-bold">${formatNumber(token.quantity * token.currentPrice)}</span>
             </div>
             </div>
         </CardContent>
