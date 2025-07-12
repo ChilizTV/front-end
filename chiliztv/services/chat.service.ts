@@ -5,7 +5,7 @@ import { ChatMessage, BetMessage } from "@/models/chat.model";
 
 export class ChatService {
 
-    static async joinRoom(matchId: number, userId: string, username: string): Promise<ServiceResult<any>> {
+    static async joinRoom(matchId: number, userId: string, username: string): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.post(`${ApiService.baseURL}/chat/join/${matchId}`, {
                 userId,
@@ -21,7 +21,7 @@ export class ChatService {
         }
     }
 
-    static async leaveRoom(matchId: number, userId: string, username: string): Promise<ServiceResult<any>> {
+    static async leaveRoom(matchId: number, userId: string, username: string): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.post(`${ApiService.baseURL}/chat/leave/${matchId}`, {
                 userId,
@@ -111,7 +111,7 @@ export class ChatService {
         }
     }
 
-    static async getChatStats(): Promise<ServiceResult<any>> {
+    static async getChatStats(): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.get(`${ApiService.baseURL}/chat/stats`);
             if (res.status === 200) {
@@ -124,7 +124,7 @@ export class ChatService {
         }
     }
 
-    static async getGunWebSocket(): Promise<ServiceResult<any>> {
+    static async getGunWebSocket(): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.get(`${ApiService.baseURL}/chat/gun`);
             if (res.status === 200) {
@@ -137,7 +137,7 @@ export class ChatService {
         }
     }
 
-    static async getUserTokenBalances(walletAddress: string): Promise<ServiceResult<any>> {
+    static async getUserTokenBalances(walletAddress: string): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.get(`${ApiService.baseURL}/chat/token-balances/${walletAddress}`);
             if (res.status === 200) {

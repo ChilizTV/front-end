@@ -114,7 +114,7 @@ export class MatchService {
         }
     }
 
-    static async getCacheStats(): Promise<ServiceResult<any>> {
+    static async getCacheStats(): Promise<ServiceResult<unknown>> {
         try {
             const res = await axios.get(`${ApiService.baseURL}/matches/cache/stats`);
             if (res.status === 200) {

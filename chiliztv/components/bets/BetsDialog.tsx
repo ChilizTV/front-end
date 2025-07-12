@@ -14,11 +14,15 @@ import Image from "next/image";
 import { FAN_TOKENS } from "@/utils/FanTokens";
 import { TrendingUp } from "lucide-react";
 import { getCHZPricePyth } from "@/app/actions/getCHZPricePyth";
+import { useWriteContract } from "wagmi";
+import { CONTRACTS_ADDRESSES } from "@/utils/ContractsAddresses";
+import { parseEther } from "viem";
+import { BETTING_ABI } from "@/lib/abis/bettingAbi";
 
 interface BetDialogProps {
     isLoggedIn: boolean;
     onLogin: () => void;
-    onBetPlaced?: (team: string, amount: string) => void;
+    onBetPlaced?: (outcome: string, amount: string) => void;
     TeamA: string;
     TeamB: string;
 }
@@ -35,14 +39,48 @@ export default function BetDialog({
     const [chzPrice, setChzPrice] = useState<number | null>(null);
     const maxAmount = 22; // Example max amount, can be dynamic
 
+    const {
+        writeContract 
+      } = useWriteContract() 
+
+
+
     const handleBet = () => {
         if (selectedTeam && betAmount.trim()) {
         console.log(`Bet placed: $${betAmount} USD on ${selectedTeam}`);
         onBetPlaced?.(selectedTeam, betAmount);
         setSelectedTeam(null);
         setBetAmount("");
+
+        // convert outcome to lowercase for consistency
+        const outcome = selectedTeam.toLowerCase() === "draw" ? "draw" : selectedTeam.toLowerCase();
+        // Call the smart contract function to place the bet
+        if (isLoggedIn) {
+            if (isNaN(parseFloat(betAmount)) || parseFloat(betAmount) <= 0) {
+                console.error("Invalid bet amount");
+                return;
+            }
+
+
+            writeContract({
+                address: CONTRACTS_ADDRESSES.betting,
+                abi: BETTING_ABI,
+                functionName: 'placeBet',
+                args: [outcome, parseEther(betAmount)],
+            })
+            }
+            else {
+                console.error("User is not logged in");
+                onLogin();
+            }
+
+        }
+        else {
+        console.error("Please select a team and enter a bet amount");
         }
     };
+
+
 
     const getTeamData = (team: string) =>
         FAN_TOKENS.find((token) => token[team])?.[team];
