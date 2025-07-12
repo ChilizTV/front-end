@@ -24,7 +24,6 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
 
     const handleBetting = (team: string, amount: string) => {
         console.log("Bet placed:", { team, amount });
-        // Add your betting logic here
     };
 
     const [commentators] = useState([

@@ -11,7 +11,7 @@ type LivePageProps = {
 export default async function LivePage({ params }: LivePageProps) {
 const { id } = await params;
 
-if (!id || !/^0x[a-fA-F0-9]{40}$/.test(id)) {
+if (!id) {
     return <div>Invalid match ID</div>;
 }
 
