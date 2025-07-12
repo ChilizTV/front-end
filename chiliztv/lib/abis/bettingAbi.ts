@@ -1,3 +1,479 @@
 export const BETTING_ABI = [
-    {"inputs":[],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"view"},{"type":"function","name":"bets","inputs":[{"name":"","type":"address","internalType":"address"}],"outputs":[{"name":"outcome","type":"uint8","internalType":"enum SportsBet.Outcome"},{"name":"state","type":"uint8","internalType":"enum SportsBet.State"},{"name":"amount","type":"uint256","internalType":"uint256"},{"name":"claimed","type":"bool","internalType":"bool"}],"stateMutability":"view"},{"type":"function","name":"claim","inputs":[],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"eventId","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"eventName","inputs":[],"outputs":[{"name":"","type":"string","internalType":"string"}],"stateMutability":"view"},{"type":"function","name":"initialize","inputs":[{"name":"_eventId","type":"uint256","internalType":"uint256"},{"name":"_eventName","type":"string","internalType":"string"},{"name":"_oddsHome","type":"uint256","internalType":"uint256"},{"name":"_oddsAway","type":"uint256","internalType":"uint256"},{"name":"_oddsDraw","type":"uint256","internalType":"uint256"},{"name":"_owner","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"oddsAway","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"oddsDraw","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"oddsHome","inputs":[],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"owner","inputs":[],"outputs":[{"name":"","type":"address","internalType":"address"}],"stateMutability":"view"},{"type":"function","name":"placeBet","inputs":[{"name":"_outcome","type":"uint8","internalType":"enum SportsBet.Outcome"},{"name":"_amount","type":"uint256","internalType":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"proxiableUUID","inputs":[],"outputs":[{"name":"","type":"bytes32","internalType":"bytes32"}],"stateMutability":"view"},{"type":"function","name":"renounceOwnership","inputs":[],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"resolveBet","inputs":[{"name":"_result","type":"uint8","internalType":"enum SportsBet.Outcome"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"result","inputs":[],"outputs":[{"name":"","type":"uint8","internalType":"enum SportsBet.Outcome"}],"stateMutability":"view"},{"type":"function","name":"setToken","inputs":[{"name":"tokenAddress","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"state","inputs":[],"outputs":[{"name":"","type":"uint8","internalType":"enum SportsBet.State"}],"stateMutability":"view"},{"type":"function","name":"transferOwnership","inputs":[{"name":"newOwner","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"upgradeToAndCall","inputs":[{"name":"newImplementation","type":"address","internalType":"address"},{"name":"data","type":"bytes","internalType":"bytes"}],"outputs":[],"stateMutability":"payable"},{"type":"function","name":"wChz","inputs":[],"outputs":[{"name":"","type":"address","internalType":"contract IMockWrappedChz"}],"stateMutability":"view"},{"type":"event","name":"BetPlaced","inputs":[{"name":"user","type":"address","indexed":true,"internalType":"address"},{"name":"outcome","type":"uint8","indexed":false,"internalType":"enum SportsBet.Outcome"},{"name":"amount","type":"uint256","indexed":false,"internalType":"uint256"}],"anonymous":false},{"type":"event","name":"BetResolved","inputs":[{"name":"result","type":"uint8","indexed":false,"internalType":"enum SportsBet.Outcome"},{"name":"amount","type":"uint256","indexed":false,"internalType":"uint256"}],"anonymous":false},{"type":"event","name":"OwnershipTransferred","inputs":[{"name":"previousOwner","type":"address","indexed":true,"internalType":"address"},{"name":"newOwner","type":"address","indexed":true,"internalType":"address"}],"anonymous":false}
+        {
+            "inputs": [],
+            "name": "UPGRADE_INTERFACE_VERSION",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "bets",
+            "outputs": [
+                {
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "outcome",
+                    "type": "uint8"
+                },
+                {
+                    "internalType": "enum SportsBet.State",
+                    "name": "state",
+                    "type": "uint8"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "claimed",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "claim",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "eventId",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "eventName",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "_eventId",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "_eventName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_oddsHome",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_oddsAway",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "_oddsDraw",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "_owner",
+                    "type": "address"
+                }
+            ],
+            "name": "initialize",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "oddsAway",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "oddsDraw",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "oddsHome",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "owner",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "_outcome",
+                    "type": "uint8"
+                }
+            ],
+            "name": "placeBet",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "proxiableUUID",
+            "outputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "",
+                    "type": "bytes32"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "renounceOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "_result",
+                    "type": "uint8"
+                }
+            ],
+            "name": "resolveBet",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "result",
+            "outputs": [
+                {
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "",
+                    "type": "uint8"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "state",
+            "outputs": [
+                {
+                    "internalType": "enum SportsBet.State",
+                    "name": "",
+                    "type": "uint8"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "transferOwnership",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "newImplementation",
+                    "type": "address"
+                },
+                {
+                    "internalType": "bytes",
+                    "name": "data",
+                    "type": "bytes"
+                }
+            ],
+            "name": "upgradeToAndCall",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "outcome",
+                    "type": "uint8"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "BetPlaced",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "enum SportsBet.Outcome",
+                    "name": "result",
+                    "type": "uint8"
+                }
+            ],
+            "name": "BetResolved",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "uint64",
+                    "name": "version",
+                    "type": "uint64"
+                }
+            ],
+            "name": "Initialized",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "previousOwner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "newOwner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnershipTransferred",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "user",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Payout",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "implementation",
+                    "type": "address"
+                }
+            ],
+            "name": "Upgraded",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "target",
+                    "type": "address"
+                }
+            ],
+            "name": "AddressEmptyCode",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "enum SportsBet.State",
+                    "name": "currentState",
+                    "type": "uint8"
+                }
+            ],
+            "name": "BetAlreadyLive",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "enum SportsBet.State",
+                    "name": "currentState",
+                    "type": "uint8"
+                }
+            ],
+            "name": "ClaimWhenBetNotEnded",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "implementation",
+                    "type": "address"
+                }
+            ],
+            "name": "ERC1967InvalidImplementation",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "ERC1967NonPayable",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "FailedCall",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "InvalidInitialization",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "NotInitializing",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableInvalidOwner",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                }
+            ],
+            "name": "OwnableUnauthorizedAccount",
+            "type": "error"
+        },
+        {
+            "inputs": [],
+            "name": "UUPSUnauthorizedCallContext",
+            "type": "error"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "slot",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "UUPSUnsupportedProxiableUUID",
+            "type": "error"
+        }
 ] as const;

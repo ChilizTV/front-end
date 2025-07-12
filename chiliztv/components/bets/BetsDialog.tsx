@@ -128,9 +128,8 @@ export default function BetDialog({
                 address: CONTRACTS_ADDRESSES.betting,
                 abi: BETTING_ABI,
                 functionName: "placeBet",
-                args: [outcomeIndex, parsedAmount], // Now using parsedAmount (BigInt)
-                // Add value if the contract requires ETH to be sent
-                // value: parsedAmount,
+                args: [Number(outcomeIndex)], // Convert outcomeIndex to number
+                value: parsedAmount, // Send the CHZ amount as value
             });
         } catch (err) {
             console.error("Error placing bet:", err);
