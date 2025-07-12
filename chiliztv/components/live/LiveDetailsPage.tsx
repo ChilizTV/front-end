@@ -1,40 +1,28 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Textarea } from "@/components/ui/textarea";
 import BetDialog from "../bets/BetsDialog";
 import { getFanToken } from "@/utils/FanTokens";
+import ChatBox from "./Chats";
 
 interface LiveDetailsPageProps {
     readonly id: string;
 }
 
-interface ChatMessage {
-    id: number;
-    user: string;
-    text: string;
-    featured: boolean;
-    timestamp?: string;
-}
-
-const usernameColors: Record<string, string> = {
-    You: "#22c55e",
-    user123: "#3b82f6",
-    pgc_token: "#f59e0b",
-    giga_trader: "#ef4444",
-};
-
 export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const { login } = useLogin();
     const { authenticated, user } = usePrivy();
 
-    const [message, setMessage] = useState("");
     const [TeamA, setTeamA] = useState("");
     const [TeamB, setTeamB] = useState("");
     const [matchInProgress] = useState(false);
+
+    const handleBetting = (team: string, amount: string) => {
+        console.log("Bet placed:", { team, amount });
+        // Add your betting logic here
+    };
 
     const [commentators] = useState([
         {
@@ -56,51 +44,12 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const [selectedCommentatorId, setSelectedCommentatorId] = useState(1);
     const selectedCommentator = commentators.find((c) => c.id === selectedCommentatorId)!;
 
-    const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-        { id: 1, user: "user123", text: "Let's gooo 🚀", featured: false, timestamp: "10:00 AM" },
-        { id: 2, user: "pgc_token", text: "Pump incoming", featured: false, timestamp: "10:01 AM" },
-        { id: 3, user: "giga_trader", text: "Betting on PSG to win!", featured: true, timestamp: "10:02 AM" },
-    ]);
-
-    const [highlightId, setHighlightId] = useState<number | null>(null);
-    const [isFeaturedNext, setIsFeaturedNext] = useState(false);
-    const chatEndRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         setTeamA("PSG");
         setTeamB("INTER");
     }, []);
 
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [chatMessages]);
-
     if (!id) return null;
-
-    const getCurrentTimestamp = () =>
-        new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-    const handleBetting = (team: string, amount: string) => {
-        setMessage(`Bet of $${amount} placed on ${team}`);
-    };
-
-    const handleSendMessage = () => {
-        if (!message.trim()) return;
-
-        const newMsg: ChatMessage = {
-        id: Date.now(),
-        user: authenticated ? String(user?.customMetadata?.username ?? "You") : "Guest",
-        text: message.trim(),
-        featured: isFeaturedNext,
-        timestamp: getCurrentTimestamp(),
-        };
-
-        setChatMessages((prev) => [...prev, newMsg]);
-        setMessage("");
-        setHighlightId(newMsg.id);
-        setIsFeaturedNext(false);
-        setTimeout(() => setHighlightId(null), 2000);
-    };
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen bg-black text-white">
@@ -191,81 +140,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             </div>
 
             {/* Chat */}
-            <div className="flex flex-col border-t border-white/10 p-4 flex-1 min-h-0">
-            <div className="font-bold mb-3 text-lg select-none">Live Chat</div>
-            <div className="relative flex-1 overflow-hidden rounded-lg min-h-0">
-                <div className="overflow-y-auto px-2 py-1 flex flex-col gap-2 h-full scrollbar-thin scrollbar-thumb-yellow-400 scrollbar-track-zinc-900">
-                {chatMessages.map((msg) => {
-                    const isOwn = msg.user === "You";
-                    const usernameColor = usernameColors[msg.user] ?? "#ddd";
-                    return (
-                    <div
-                        key={msg.id}
-                        className={`max-w-[85%] px-4 py-2 rounded-xl break-words relative ${
-                        msg.featured
-                            ? isOwn
-                            ? "bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-bold shadow-lg shadow-yellow-400/70"
-                            : "bg-gradient-to-r from-yellow-600 to-yellow-500 text-white font-bold shadow-md shadow-yellow-500/70"
-                            : isOwn
-                            ? "bg-primary/80 text-white font-semibold"
-                            : "bg-white/10 text-white/80"
-                        } ${highlightId === msg.id ? "ring-2 ring-yellow-400 animate-pulse" : ""} ${
-                        isOwn ? "self-end" : "self-start"
-                        }`}
-                    >
-                        <div className="flex items-center gap-2 mb-1 select-none">
-                        <span className="font-semibold" style={{ color: usernameColor }}>
-                            {msg.user}
-                        </span>
-                        <span className="text-xs text-white/60">{msg.timestamp}</span>
-                        {msg.featured && <span className="text-yellow-400 text-sm select-none" title="Featured message">⭐</span>}
-                        </div>
-                        <div className="whitespace-pre-wrap">{msg.text}</div>
-                    </div>
-                    );
-                })}
-                <div ref={chatEndRef} />
-                </div>
-                <div className="pointer-events-none absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-zinc-950 to-transparent" />
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-zinc-950 to-transparent" />
-            </div>
-
-            <div className="flex gap-2 items-center mt-4 flex-shrink-0">
-                <Textarea
-                rows={1}
-                placeholder={authenticated ? "Type your message..." : "Log in to chat"}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="bg-zinc-800 text-white flex-1 resize-none rounded-lg px-3 py-2 placeholder:text-zinc-400 focus:ring-2 focus:ring-yellow-400 transition"
-                disabled={!authenticated}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                    }
-                }}
-                autoFocus={authenticated}
-                style={{ maxHeight: 120, overflowY: "auto" }}
-                />
-                <button
-                type="button"
-                onClick={() => setIsFeaturedNext((prev) => !prev)}
-                aria-label="Toggle featured message"
-                title="Mark message as featured"
-                className={`p-2 rounded-md transition-colors duration-200 flex items-center justify-center text-lg ${
-                    isFeaturedNext
-                    ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/50"
-                    : "bg-zinc-700 text-yellow-400 hover:bg-yellow-400 hover:text-black"
-                }`}
-                disabled={!authenticated}
-                >
-                ⭐
-                </button>
-                <Button onClick={handleSendMessage} disabled={!message.trim() || !authenticated}>
-                Send
-                </Button>
-            </div>
-            </div>
+            <ChatBox matchId={id} userId={user?.id ?? ""} username={String(user?.customMetadata?.username ?? "")} />
         </div>
         </div>
     );
