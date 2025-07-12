@@ -128,6 +128,10 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                     onBetPlaced={handleBetting}
                     TeamA={TeamA}
                     TeamB={TeamB}
+                    matchId={id}
+                    userId={user?.id ?? ""}
+                    username={String(user?.customMetadata?.username ?? "")}
+                    walletAddress={walletAddress}
                 />
                 </>
             ) : (
