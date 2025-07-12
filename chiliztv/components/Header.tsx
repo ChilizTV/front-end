@@ -121,6 +121,15 @@ export function Header() {
                             >
                                 Live Matches
                             </button>
+                            <button
+                                onClick={() => {
+                                    router.push("/leaderboard");
+                                    setMenuOpen(false);
+                                }}
+                                className="text-white/80 hover:text-white text-left"
+                            >
+                                Leaderboard
+                            </button>
                             {authenticated && (
                                 <button
                                     onClick={() => {
