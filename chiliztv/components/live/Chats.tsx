@@ -39,7 +39,7 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
 
         fetchMessages();
         
-        const interval = setInterval(fetchMessages, 10000);
+        const interval = setInterval(fetchMessages, 2000);
 
         return () => clearInterval(interval);
     }, [matchId]);
