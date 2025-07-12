@@ -14,11 +14,11 @@ export type FanTokenMap = {
 export const FAN_TOKENS: FanTokenMap[] = [
 {
     PSG: {
-    link: "https://www.socios.com/psg",
-    image: "https://actufinance.fr/wp-content/uploads/2022/02/PSG.png",
-    name: "Paris Saint-Germain Fan Token",
-    symbol: "PSG",
-    tokenAddress: "0x0b8f3c1d2e6a4b5c7f8e9d1a2b3c4d5e6f7g8h9i",
+        link: "https://www.socios.com/psg",
+        image: "https://actufinance.fr/wp-content/uploads/2022/02/PSG.png",
+        name: "Paris Saint-Germain Fan Token",
+        symbol: "PSG",
+        tokenAddress: "0x0b8f3c1d2e6a4b5c7f8e9d1a2b3c4d5e6f7g8h9i",
     },
     },
     {
@@ -38,6 +38,14 @@ export const FAN_TOKENS: FanTokenMap[] = [
             symbol: "BAR",
         },
         },
+    {
+        INTER: {
+            link: "https://www.socios.com/inter",
+            image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/langfr-250px-FC_Internazionale_Milano_2021.svg.png",
+            name: "Inter Milan Fan Token",
+            symbol: "INTER",
+        },
+    },
 ];
 
 // Flatten FAN_TOKENS for easy lookup
@@ -69,5 +77,6 @@ export const getFanToken = (team: string): FanTokenData | undefined => {
     if (team.includes("Barcelona")) return flatFanTokenMap["BAR"];
     if (team.includes("Juventus")) return flatFanTokenMap["JUV"];
     if (team.includes("PSG")) return flatFanTokenMap["PSG"];
+    if (team.includes("INTER")) return flatFanTokenMap["INTER"];
     return undefined;
 };

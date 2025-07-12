@@ -33,6 +33,7 @@ export default function BetDialog({
     const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
     const [betAmount, setBetAmount] = useState("");
     const [chzPrice, setChzPrice] = useState<number | null>(null);
+    const maxAmount = 22; // Example max amount, can be dynamic
 
     const handleBet = () => {
         if (selectedTeam && betAmount.trim()) {
@@ -71,7 +72,7 @@ export default function BetDialog({
         <DialogTrigger asChild>
             <Button className="w-full bg-[var(--primary)] hover:bg-[var(--primary-foreground)] text-[var(--primary-foreground)] font-semibold shadow-md rounded-lg transition-transform duration-200 transform hover:scale-[1.05] flex items-center justify-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            Place Bet
+                Place Bet
             </Button>
         </DialogTrigger>
 
@@ -84,51 +85,60 @@ export default function BetDialog({
 
             {/* Amount Input */}
             <div className="relative w-full">
-            <div className="flex items-center justify-center w-full gap-4">
-                <span className="text-6xl font-bold text-muted-foreground select-none">
-                $
-                </span>
-                <input
-                id="betAmount"
-                type="number"
-                inputMode="decimal"
-                min="1"
-                placeholder="0.00"
-                value={betAmount}
-                onChange={(e) => setBetAmount(e.target.value)}
-                autoFocus
-                className="
-                    w-auto
-                    max-w-[200px]
-                    text-7xl
-                    font-extrabold
-                    bg-transparent
-                    text-[var(--foreground)]
-                    placeholder-[var(--muted-foreground)]
-                    text-center  /* changed from text-left */
-                    outline-none
-                    border-none
-                    ring-0
-                    shadow-none
-                    py-6
-                    transition-transform duration-300 ease-in-out
-                    focus:scale-[1.02]
-                    tracking-tight
-                    selection:bg-[var(--accent)]
-                    [appearance:textfield]
-                    [&::-webkit-inner-spin-button]:appearance-none
-                    [&::-webkit-outer-spin-button]:appearance-none
-                "
-                />
+            <div className="relative w-full">
+                <div className="flex items-center justify-center w-full gap-4">
+                    <span className="text-6xl font-bold text-muted-foreground select-none">
+                    $
+                    </span>
+                    <input
+                    id="betAmount"
+                    type="number"
+                    inputMode="decimal"
+                    min="1"
+                    placeholder="0.00"
+                    value={betAmount}
+                    onChange={(e) => setBetAmount(e.target.value)}
+                    autoFocus
+                    className="
+                        w-auto
+                        max-w-[200px]
+                        text-7xl
+                        font-extrabold
+                        bg-transparent
+                        text-[var(--foreground)]
+                        placeholder-[var(--muted-foreground)]
+                        text-center
+                        outline-none
+                        border-none
+                        ring-0
+                        shadow-none
+                        py-6
+                        transition-transform duration-300 ease-in-out
+                        focus:scale-[1.02]
+                        tracking-tight
+                        selection:bg-[var(--accent)]
+                        [appearance:textfield]
+                        [&::-webkit-inner-spin-button]:appearance-none
+                        [&::-webkit-outer-spin-button]:appearance-none
+                    "
+                    />
 
-            </div>
-
-            {chzPrice && betAmount && !isNaN(Number(betAmount)) && (
-                <div className="mt-3 text-center text-sm text-[var(--muted-foreground)] flex items-center justify-center gap-2">
-                <Image src="/chiliz_icon.png" alt="CHZ Icon" width={18} height={18} />
-                ≈ {(Number(betAmount) / chzPrice).toFixed(2)} CHZ
+                    {/* Max Button */}
+                    <button
+                    onClick={() => setBetAmount(maxAmount.toString())}
+                    className="ml-2 px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] bg-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--muted-foreground)/10] transition"
+                    >
+                    Max
+                    </button>
                 </div>
-            )}
+
+                {chzPrice && betAmount && !isNaN(Number(betAmount)) && (
+                    <div className="mt-3 text-center text-sm text-[var(--muted-foreground)] flex items-center justify-center gap-2">
+                    <Image src="/chiliz_icon.png" alt="CHZ Icon" width={18} height={18} />
+                    ≈ {(Number(betAmount) / chzPrice).toFixed(2)} CHZ
+                    </div>
+                )}
+                </div>
             </div>
 
             {/* Team Selection + Draw */}

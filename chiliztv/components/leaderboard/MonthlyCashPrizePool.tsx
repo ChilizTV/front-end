@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Trophy, Crown, Medal, Star } from "lucide-react";
+import PrizePool from "./PrizePool";
 
 export function MonthlyCashPrizePool() {
     // Enhanced prize breakdown data with icons
@@ -29,11 +30,7 @@ export function MonthlyCashPrizePool() {
             </p>
 
             <div className="mb-8 text-center">
-            <div className="text-white/60 text-sm mb-2 uppercase tracking-wide font-medium">Total Prize Pool</div>
-            <div className="text-white text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent" style={{ fontFamily: "Lexend, sans-serif" }}>
-                ${totalPrizePool.toLocaleString()}
-            </div>
-            <div className="w-24 h-1 bg-gradient-to-r from-green-400 to-emerald-400 mx-auto mt-2 rounded-full"></div>
+            <PrizePool totalPrizePool={totalPrizePool} />
             </div>
 
             <div className="space-y-4">
