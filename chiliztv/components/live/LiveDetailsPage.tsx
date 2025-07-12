@@ -111,11 +111,11 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                 <div className="flex items-center gap-2">
                 <Image src={getFanToken(TeamA)?.image ?? "/placeholder.png"} alt={TeamA} width={40} height={40} className="rounded-full object-cover" />
                 <span>{TeamA}</span>
-                <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">2</span>
+                <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">4</span>
                 </div>
                 <span className="text-yellow-400 font-bold">-</span>
                 <div className="flex items-center gap-2">
-                <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">1</span>
+                <span className="bg-yellow-400 text-black rounded-full px-3 py-1 shadow-lg">0</span>
                 <span>{TeamB}</span>
                 <Image src={getFanToken(TeamB)?.image ?? "/placeholder.png"} alt={TeamB} width={40} height={40} className="rounded-full object-cover" />
                 </div>

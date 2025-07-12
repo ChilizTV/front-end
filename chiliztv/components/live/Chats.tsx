@@ -45,6 +45,7 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
         }
     ]);
     const [newMessage, setNewMessage] = useState("");
+    const [isNextFeatured, setIsNextFeatured] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const baseUrl = "https://back-end-kps2.onrender.com/chat";
 
@@ -71,7 +72,6 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
             }
         };
 
-        // Fetch real messages
         fetchMessages();
     }, [matchId]);
 
@@ -79,33 +79,39 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
+        const messagePayload = {
+            userId,
+            username,
+            message: newMessage,
+            walletAddress,
+            isFeatured: isNextFeatured,
+        };
+
         try {
             const res = await fetch(`${baseUrl}/message/${matchId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, username, message: newMessage }),
+                body: JSON.stringify(messagePayload),
             });
 
             const data = await res.json();
             if (data.success) {
                 setMessages((prev) => [...prev, data.data]);
                 setNewMessage("");
+                setIsNextFeatured(false);
             } else {
                 alert("Failed to send message");
             }
         } catch (err) {
             console.error("Error sending message:", err);
-            // For demo purposes, add message locally
+            // Local fallback
             const newMsg = {
-                userId: userId,
-                username: username,
-                message: newMessage,
+                ...messagePayload,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                isFeatured: false,
-                walletAddress: walletAddress,
             };
             setMessages((prev) => [...prev, newMsg]);
             setNewMessage("");
+            setIsNextFeatured(false);
         }
     };
 
@@ -138,8 +144,8 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
                             )}
                         </div>
                         <div className={`rounded-lg p-3 max-w-xs ${
-                            msg.isFeatured 
-                                ? "bg-yellow-500 text-black font-medium" 
+                            msg.isFeatured
+                                ? "bg-yellow-500 text-black font-medium"
                                 : "bg-gray-700 text-gray-100"
                         }`}>
                             {msg.message}
@@ -158,21 +164,14 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder="Type your message..."
+                            placeholder={isNextFeatured ? "Type your featured message..." : "Type your message..."}
                         />
                     </div>
                     <button
-                        className="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                        onClick={() => {
-                            // Toggle featured status of the last message
-                            if (messages.length > 0) {
-                                const lastIndex = messages.length - 1;
-                                const updatedMessages = [...messages];
-                                updatedMessages[lastIndex].isFeatured = !updatedMessages[lastIndex].isFeatured;
-                                setMessages(updatedMessages);
-                            }
-                        }}
-                        title="Feature Message"
+                        className={`px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2
+                            ${isNextFeatured ? "bg-yellow-600 text-black" : "bg-yellow-500 hover:bg-yellow-600 text-black"}`}
+                        onClick={() => setIsNextFeatured((prev) => !prev)}
+                        title={isNextFeatured ? "Unmark as Featured" : "Mark as Featured"}
                     >
                         <Star className="w-4 h-4" />
                     </button>
