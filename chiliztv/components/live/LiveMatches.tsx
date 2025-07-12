@@ -174,22 +174,8 @@ export default function LiveMatches() {
     };
 
     const getTeamLogo = (teamName: string): string => {
-        const teamLogos: Record<string, string> = {
-            "Barcelona": "/barca.png",
-            "Real Madrid": "/madrid.png",
-            "Manchester City": "/city.png",
-            "Liverpool": "/liverpool.png",
-            "Juventus": "/juve.png",
-            "AC Milan": "/milan.png",
-            "PSG": "/PSG.png",
-            "Bayern Munich": "/bayern.png",
-            "Chelsea": "/chelsea.png",
-            "Arsenal": "/arsenal.png",
-            "Inter Milan": "/INTER.png",
-            "Napoli": "/napoli.png"
-        };
-        
-        return teamLogos[teamName] || "/default-team.png";
+        const token = getFanToken(teamName);
+        return token?.image || "/default-team.png";
     };
 
     useEffect(() => {
