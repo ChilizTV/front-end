@@ -100,6 +100,10 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
         return `${hours}:${minutes}`;
     };
 
+    const isOwnMessage = (msg: ChatMessage) => {
+        return msg.userId === userId || msg.username === username;
+    };
+
     return (
         <div className="bg-gray-900 text-white w-full max-w-sm mx-auto rounded-lg overflow-hidden shadow-2xl">
             {/* Header */}
@@ -109,28 +113,42 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
 
             {/* Messages */}
             <div className="h-96 overflow-y-auto p-4 space-y-3">
-                {messages.map((msg, idx) => (
-                    <div key={msg.id || idx} className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            <span className="text-blue-400 font-medium text-sm">
-                                {msg.username}
-                            </span>
-                            <span className="text-gray-500 text-xs">
-                                {formatTime(msg.timestamp)}
-                            </span>
-                            {msg.isFeatured && (
-                                <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                            )}
+                {messages.map((msg, idx) => {
+                    const ownMessage = isOwnMessage(msg);
+                    return (
+                        <div key={msg.id || idx} className={`flex ${ownMessage ? 'justify-end' : 'justify-start'}`}>
+                            <div className={`space-y-1 max-w-xs ${ownMessage ? 'text-right' : 'text-left'}`}>
+                                <div className={`flex items-center gap-2 ${ownMessage ? 'justify-end' : 'justify-start'}`}>
+                                    {!ownMessage && (
+                                        <span className="text-blue-400 font-medium text-sm">
+                                            {msg.username}
+                                        </span>
+                                    )}
+                                    <span className="text-gray-500 text-xs">
+                                        {formatTime(msg.timestamp)}
+                                    </span>
+                                    {msg.isFeatured && (
+                                        <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                                    )}
+                                    {ownMessage && (
+                                        <span className="text-blue-400 font-medium text-sm">
+                                            {msg.username}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className={`rounded-lg p-3 ${
+                                    msg.isFeatured
+                                        ? "bg-yellow-500 text-black font-medium"
+                                        : ownMessage
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-700 text-gray-100"
+                                }`}>
+                                    {msg.message}
+                                </div>
+                            </div>
                         </div>
-                        <div className={`rounded-lg p-3 max-w-xs ${
-                            msg.isFeatured
-                                ? "bg-yellow-500 text-black font-medium"
-                                : "bg-gray-700 text-gray-100"
-                        }`}>
-                            {msg.message}
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
                 <div ref={messagesEndRef} />
             </div>
 
