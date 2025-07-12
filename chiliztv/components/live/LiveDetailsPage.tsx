@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import BetDialog from "../bets/BetsDialog";
@@ -14,6 +14,9 @@ interface LiveDetailsPageProps {
 export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const { login } = useLogin();
     const { authenticated, user } = usePrivy();
+    const { wallets } = useWallets();
+
+    const walletAddress = wallets?.[0]?.address ?? "";
 
     const [TeamA, setTeamA] = useState("");
     const [TeamB, setTeamB] = useState("");
@@ -140,7 +143,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             </div>
 
             {/* Chat */}
-            <ChatBox matchId={id} userId={user?.id ?? ""} username={String(user?.customMetadata?.username ?? "")} />
+            <ChatBox matchId={id} userId={user?.id ?? ""} username={String(user?.customMetadata?.username ?? "")} walletAddress={walletAddress} />
         </div>
         </div>
     );

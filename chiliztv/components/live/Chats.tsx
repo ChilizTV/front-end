@@ -7,36 +7,41 @@ interface ChatMessage {
     message: string;
     timestamp: string;
     isFeatured?: boolean;
+    walletAddress: string;
 }
 
 interface ChatBoxProps {
     matchId: string;
     userId: string;
     username: string;
+    walletAddress: string;
 }
 
-export default function ChatBox({ matchId, userId, username }: ChatBoxProps) {
+export default function ChatBox({ matchId, userId, username, walletAddress }: ChatBoxProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([
         {
             userId: "123",
             username: "user123",
             message: "Let's gooo 🚀",
             timestamp: "10:00 AM",
-            isFeatured: false
+            isFeatured: false,
+            walletAddress: ""
         },
         {
-            userId: "456", 
+            userId: "456",
             username: "pgc_token",
             message: "Pump incoming",
             timestamp: "10:01 AM",
-            isFeatured: false
+            isFeatured: false,
+            walletAddress: ""
         },
         {
             userId: "789",
             username: "giga_trader",
             message: "Betting on PSG to win!",
             timestamp: "10:02 AM",
-            isFeatured: true
+            isFeatured: true,
+            walletAddress: ""
         }
     ]);
     const [newMessage, setNewMessage] = useState("");
@@ -96,7 +101,8 @@ export default function ChatBox({ matchId, userId, username }: ChatBoxProps) {
                 username: username,
                 message: newMessage,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                isFeatured: false
+                isFeatured: false,
+                walletAddress: walletAddress,
             };
             setMessages((prev) => [...prev, newMsg]);
             setNewMessage("");
