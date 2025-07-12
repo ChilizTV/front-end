@@ -120,4 +120,30 @@ export class ChatService {
             return ServiceResult.failed();
         }
     }
+
+    static async getGunWebSocket(): Promise<ServiceResult<any>> {
+        try {
+            const res = await axios.get(`${ApiService.baseURL}/chat/gun`);
+            if (res.status === 200) {
+                return ServiceResult.success(res.data);
+            }
+            return ServiceResult.failed();
+        } catch(err) {
+            console.log(err);
+            return ServiceResult.failed();
+        }
+    }
+
+    static async getUserTokenBalances(walletAddress: string): Promise<ServiceResult<any>> {
+        try {
+            const res = await axios.get(`${ApiService.baseURL}/chat/token-balances/${walletAddress}`);
+            if (res.status === 200) {
+                return ServiceResult.success(res.data.balances);
+            }
+            return ServiceResult.failed();
+        } catch(err) {
+            console.log(err);
+            return ServiceResult.failed();
+        }
+    }
 }
