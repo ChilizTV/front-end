@@ -16,23 +16,32 @@ interface ChatBoxProps {
 export default function ChatBox({ matchId, userId, username, walletAddress }: ChatBoxProps) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [newMessage, setNewMessage] = useState("");
-    const [isNextFeatured, setIsNextFeatured] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchMessages = async () => {
             try {
+                console.log("📥 Fetching messages for match:", matchId);
                 const result = await ChatService.getRoomMessages(parseInt(matchId));
+                console.log("📥 Messages fetch result:", result);
+                
                 if (result.errorCode === 0 && result.result) {
                     const extendedMessages: ChatMessage[] = result.result.map(msg => ({
                         ...msg,
                         walletAddress: (msg as any).walletAddress || "",
                         isFeatured: (msg as any).isFeatured || false
                     }));
+                    
+                    console.log("📋 Processed messages:", extendedMessages.map(msg => ({
+                        username: msg.username,
+                        message: msg.message.substring(0, 30) + "...",
+                        isFeatured: msg.isFeatured
+                    })));
+                    
                     setMessages(extendedMessages);
                 }
             } catch (err) {
-                console.error("Error fetching messages:", err);
+                console.error("❌ Error fetching messages:", err);
             }
         };
 
@@ -46,6 +55,14 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
+        console.log("🚀 Sending message:", {
+            matchId,
+            userId,
+            username,
+            message: newMessage,
+            walletAddress
+        });
+
         try {
             const result = await ChatService.sendMessage(
                 parseInt(matchId),
@@ -55,34 +72,35 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
                 walletAddress
             );
 
+            console.log("📡 Backend response:", result);
+
             if (result.errorCode === 0 && result.result) {
+                // Use the server response to determine if message is featured
+                const serverMessage = result.result as ChatMessage;
+                console.log("✅ Server message data:", serverMessage);
+                
                 const extendedMessage: ChatMessage = {
-                    ...result.result,
-                    walletAddress: (result.result as any).walletAddress || walletAddress,
-                    isFeatured: (result.result as any).isFeatured || isNextFeatured
+                    ...serverMessage,
+                    walletAddress: (serverMessage as any).walletAddress || walletAddress,
+                    isFeatured: (serverMessage as any).isFeatured || false
                 };
+                
+                console.log("🎯 Extended message with featured status:", {
+                    message: extendedMessage.message,
+                    isFeatured: extendedMessage.isFeatured,
+                    username: extendedMessage.username
+                });
+                
                 setMessages((prev) => [...prev, extendedMessage]);
                 setNewMessage("");
-                setIsNextFeatured(false);
+                console.log("✅ Message added to chat successfully");
             } else {
+                console.error("❌ Failed to send message:", result);
                 alert("Failed to send message");
             }
         } catch (err) {
-            console.error("Error sending message:", err);
-            const newMsg: ChatMessage = {
-                id: Date.now().toString(),
-                matchId: parseInt(matchId),
-                userId,
-                username,
-                message: newMessage,
-                timestamp: Date.now(),
-                type: "message",
-                walletAddress,
-                isFeatured: isNextFeatured
-            };
-            setMessages((prev) => [...prev, newMsg]);
-            setNewMessage("");
-            setIsNextFeatured(false);
+            console.error("❌ Error sending message:", err);
+            alert("Error sending message");
         }
     };
 
@@ -160,17 +178,9 @@ export default function ChatBox({ matchId, userId, username, walletAddress }: Ch
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder={isNextFeatured ? "Type your featured message..." : "Type your message..."}
+                            placeholder="Type your message..."
                         />
                     </div>
-                    <button
-                        className={`px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2
-                            ${isNextFeatured ? "bg-yellow-600 text-black" : "bg-yellow-500 hover:bg-yellow-600 text-black"}`}
-                        onClick={() => setIsNextFeatured((prev) => !prev)}
-                        title={isNextFeatured ? "Unmark as Featured" : "Mark as Featured"}
-                    >
-                        <Star className="w-4 h-4" />
-                    </button>
                     <button
                         className="bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2"
                         onClick={handleSendMessage}
