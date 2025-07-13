@@ -11,8 +11,8 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "ChilizTV - Live Sports Betting Streaming",
-  description: "Watch live sports matches and place bets in real-time with ChilizTV. Experience the thrill of live sports streaming and betting all in one platform.",
+  title: "ChilizTV - Live Sports SocialFi Streaming Platform",
+  description: "Watch live sports matches and place predictions in real-time with ChilizTV. Experience the thrill of live sports streaming and betting all in one platform.",
   icons: {
     icon: "/chiliz_icon.png",
     apple: "/apple-touch-icon.png",

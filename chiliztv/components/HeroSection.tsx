@@ -72,7 +72,7 @@ export function HeroSection() {
                     }
                 }} // Redirect to dashboard if authenticated, otherwise trigger login
                 >
-                    Start Betting Now
+                    Start Playing Now
                 <Play className="ml-2 h-5 w-5 rotate-90" />
                 </Button>
             </div>

@@ -9,7 +9,7 @@ import { getAllFanTokens } from "@/utils/FanTokens";
 import Image from "next/image";
 import { MonthlyCashPrizePool } from "./MonthlyCashPrizePool";
 
-const mockTopBettors = [
+const mockTopPredicts = [
     {
       rank: 1,
       username: "FootballKing",
@@ -161,7 +161,7 @@ const mockTopBettors = [
   ];
 
 export function Leaderboard() {
-  const [activeTab, setActiveTab] = useState("bettors");
+  const [activeTab, setActiveTab] = useState("predicts");
   const fanTokens = getAllFanTokens();
 
   const getRankIcon = (rank: number) => {
@@ -197,7 +197,7 @@ export function Leaderboard() {
             className="text-white/70 text-[16px] sm:text-[18px] max-w-2xl mx-auto"
             style={{ fontFamily: "Lexend, sans-serif" }}
             >
-            Compete with the best bettors and fan token collectors on{' '}
+            Compete with the best predicts and fan token collectors on{' '}
             <span style={{ display: 'inline-flex', verticalAlign: 'middle', margin: '0 4px' }}>
                 <Image
                 src="/chiliz_icon.png"
@@ -251,42 +251,42 @@ export function Leaderboard() {
         {/* Leaderboard Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-8 sm:mt-10">
           <TabsList className="grid w-full grid-cols-2 bg-[#1a1919] border-white/10 mb-6 rounded-md overflow-hidden">
-            <TabsTrigger value="bettors" className="data-[state=active]:bg-primary text-white py-2 sm:py-3">
-              🎯 Top Bettors
+            <TabsTrigger value="predicts" className="data-[state=active]:bg-primary text-white py-2 sm:py-3">
+              🎯 Top Predicts
             </TabsTrigger>
             <TabsTrigger value="tokens" className="data-[state=active]:bg-primary text-white py-2 sm:py-3">
               💎 Token Holders
             </TabsTrigger>
           </TabsList>
 
-          {/* Top Bettors Tab */}
-          <TabsContent value="bettors">
+          {/* Top Predicts Tab */}
+          <TabsContent value="predicts">
             <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2 text-lg sm:text-xl">
                   <Trophy className="w-5 h-5 text-primary" />
-                  Top Bettors This Month
+                  Top Predicts This Month
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockTopBettors.map((bettor) => (
+                  {mockTopPredicts.map((predicts) => (
                     <div
-                      key={bettor.rank}
+                      key={predicts.rank}
                       className={`p-4 sm:p-6 rounded-lg border transition-all duration-300 hover:border-primary/30 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 ${
-                        bettor.rank <= 3
+                        predicts.rank <= 3
                           ? "bg-gradient-to-r from-primary/10 to-[#FF3465]/10 border-primary/20"
                           : "bg-[#0f0f0f] border-white/10"
                       }`}
                     >
                       <div className="flex items-center gap-4 flex-shrink-0">
                         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12">
-                          {getRankIcon(bettor.rank)}
+                          {getRankIcon(predicts.rank)}
                         </div>
                         <Avatar className="w-10 h-10 sm:w-12 sm:h-12 border border-white/10">
-                          <AvatarImage src={bettor.avatar} alt={bettor.username} />
+                          <AvatarImage src={predicts.avatar} alt={predicts.username} />
                           <AvatarFallback className="bg-primary/20 text-primary">
-                            {bettor.username.slice(0, 2).toUpperCase()}
+                            {predicts.username.slice(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </div>
@@ -295,29 +295,29 @@ export function Leaderboard() {
                           className="font-bold text-white text-sm sm:text-[16px]"
                           style={{ fontFamily: "Lexend, sans-serif" }}
                         >
-                          {bettor.username}
+                          {predicts.username}
                         </h3>
                         <div className="flex flex-wrap justify-center sm:justify-start gap-4 text-xs sm:text-sm text-white/60 mt-1">
                           <div className="flex items-center gap-1">
                             <img
-                              src={getTokenLogo(bettor.favoriteTeam)}
-                              alt={bettor.favoriteTeam}
+                              src={getTokenLogo(predicts.favoriteTeam)}
+                              alt={predicts.favoriteTeam}
                               className="w-4 h-4 rounded-full"
                             />
-                            <span>Fan of {bettor.favoriteTeam}</span>
+                            <span>Fan of {predicts.favoriteTeam}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="w-3 h-3 text-yellow-500" />
-                            <span>{bettor.streak} win streak</span>
+                            <span>{predicts.streak} win streak</span>
                           </div>
                         </div>
                       </div>
                       <div className="text-center sm:text-right flex-shrink-0 min-w-[110px]">
                         <div className="text-lg sm:text-[20px] font-bold text-green-400 whitespace-nowrap">
-                          ${bettor.totalWinnings.toLocaleString()}
+                          ${predicts.totalWinnings.toLocaleString()}
                         </div>
                         <div className="text-xs sm:text-sm text-white/60">
-                          {bettor.winRate}% win rate • {bettor.totalBets} bets
+                          {predicts.winRate}% win rate • {predicts.totalBets} bets
                         </div>
                       </div>
                     </div>
