@@ -1,37 +1,37 @@
-# ChilizTV - Live Sports Betting & Streaming Platform
+# ChilizTV - Live Sports Prediction & Streaming Platform
 
-A modern, real-time sports betting and streaming platform built with Next.js, featuring live match streaming, real-time chat, and Web3 integration with Chiliz blockchain.
+A modern, real-time sports predictions and streaming platform built with Next.js, featuring live match streaming, real-time chat, and Web3 integration with Chiliz blockchain.
 
 ## 🚀 Features
 
 ### 🏈 Live Sports Streaming
 - **Real-time match streaming** with multiple commentator options
-- **Live match status** tracking (LIVE, BET_OPEN, ENDED)
+- **Live match status** tracking (LIVE, PREDICTION_OPEN, ENDED)
 
-### 💰 Sports Betting
-- **Web3 betting** with CHZ tokens on Chiliz blockchain
-- **Multiple bet types**: Match winner, Half-time bets
+### 💰 Sports prediction
+- **Web3 prediction** with CHZ tokens on Chiliz blockchain
+- **Multiple prediction types**: Match winner, Half-time predictions
 - **Real-time odds** from API-FOOTBALL
-- **Bet history** tracking and portfolio management
-- **Fan token integration** for enhanced betting features
+- **Prediction history** tracking and portfolio management
+- **Fan token integration** for enhanced predictionning features
 
 ### 💬 Real-time Chat System
 - **Live chat** per match with Gun.js
 - **Featured messages** for users with 50+ fan tokens
-- **Bet messages** automatically featured
+- **Prediciton messages** automatically featured
 - **System messages** for match events
 - **User authentication** with Privy
 
 ### 🏆 Fan Token Integration
-- **Fan token balance** display in betting dialog
+- **Fan token balance** display in predictionning dialog
 - **Token breakdown** showing individual team tokens
 - **Featured message access** based on token balance
-- **Half-time betting** requires 50+ fan tokens
+- **Half-time predictionning** requires 50+ fan tokens
 
 ### 👤 User Management
 - **Web3 authentication** with Privy
 - **Wallet integration** with Chiliz testnet
-- **User profiles** with betting statistics
+- **User profiles** with predictionning statistics
 - **Username customization** with verification
 - **ZK Identity to withdraw** with self-protocol
 
