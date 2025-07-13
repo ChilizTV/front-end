@@ -75,8 +75,8 @@ export default function LiveMatches() {
                 },
                 displayStatus: "BET_OPEN",
                 time: "in 6h 30m",
-                logoA: "/psg.png",
-                logoB: "/inter.png",
+                logoA: "https://actufinance.fr/wp-content/uploads/2022/02/PSG.png",
+                logoB: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/langfr-250px-FC_Internazionale_Milano_2021.svg.png",
                 viewers: undefined
             };
             
