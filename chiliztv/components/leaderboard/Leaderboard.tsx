@@ -16,27 +16,27 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 45230.50,
       winRate: 78.5,
-      totalBets: 342,
+      totalPredictions: 342,
       favoriteTeam: "PSG",
       streak: 12
     },
     {
       rank: 2,
-      username: "BetMaster2024",
+      username: "PredictionMaster2024",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 38920.75,
       winRate: 74.2,
-      totalBets: 298,
+      totalPredictions: 298,
       favoriteTeam: "BAR",
       streak: 8
     },
     {
       rank: 3,
-      username: "ChampionBetter",
+      username: "PredictionChampion",
       avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 32156.90,
       winRate: 71.8,
-      totalBets: 267,
+      totalPredictions: 267,
       favoriteTeam: "JUV",
       streak: 5
     },
@@ -46,17 +46,17 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 28775.25,
       winRate: 69.3,
-      totalBets: 245,
+      totalPredictions: 245,
       favoriteTeam: "PSG",
       streak: 15
     },
     {
       rank: 5,
-      username: "LiveBetPro",
+      username: "LivePredictionPro",
       avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 25890.40,
       winRate: 67.1,
-      totalBets: 223,
+      totalPredictions: 223,
       favoriteTeam: "BAR",
       streak: 3
     },
@@ -66,7 +66,7 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 23456.80,
       winRate: 65.9,
-      totalBets: 201,
+      totalPredictions: 201,
       favoriteTeam: "JUV",
       streak: 7
     },
@@ -76,17 +76,17 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 21234.15,
       winRate: 64.2,
-      totalBets: 189,
+      totalPredictions: 189,
       favoriteTeam: "PSG",
       streak: 2
     },
     {
       rank: 8,
-      username: "BettingLegend",
+      username: "WinningStreaker",
       avatar: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 19876.50,
       winRate: 62.8,
-      totalBets: 176,
+      totalPredictions: 176,
       favoriteTeam: "BAR",
       streak: 9
     },
@@ -96,7 +96,7 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 18567.30,
       winRate: 61.5,
-      totalBets: 164,
+      totalPredictions: 164,
       favoriteTeam: "JUV",
       streak: 4
     },
@@ -106,7 +106,7 @@ const mockTopPredicts = [
       avatar: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=64&h=64&fit=crop&crop=face",
       totalWinnings: 17234.70,
       winRate: 60.1,
-      totalBets: 152,
+      totalPredictions: 152,
       favoriteTeam: "PSG",
       streak: 6
     }
@@ -241,8 +241,8 @@ export function Leaderboard() {
               <div className="text-center p-4 bg-gradient-to-b from-purple-500/20 to-purple-600/5 rounded-lg border border-purple-500/20">
                 <Zap className="w-12 h-12 text-purple-500 mx-auto mb-2" />
                 <h4 className="font-bold text-white mb-1 text-base sm:text-lg">Speed Demon</h4>
-                <p className="text-purple-500 text-sm sm:text-base">Fastest live bets</p>
-                <p className="text-white/60 text-xs sm:text-sm mt-1">LiveBetPro - 0.3s avg</p>
+                <p className="text-purple-500 text-sm sm:text-base">Fastest live predictions</p>
+                <p className="text-white/60 text-xs sm:text-sm mt-1">LivePredictionPro - 0.3s avg</p>
               </div>
             </div>
           </CardContent>
@@ -317,7 +317,7 @@ export function Leaderboard() {
                           ${predicts.totalWinnings.toLocaleString()}
                         </div>
                         <div className="text-xs sm:text-sm text-white/60">
-                          {predicts.winRate}% win rate • {predicts.totalBets} bets
+                          {predicts.winRate}% win rate • {predicts.totalPredictions} predictions
                         </div>
                       </div>
                     </div>
