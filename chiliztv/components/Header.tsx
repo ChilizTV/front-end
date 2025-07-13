@@ -1,17 +1,48 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useLogin, usePrivy } from '@privy-io/react-auth';
+import { useLogin, usePrivy, useWallets} from '@privy-io/react-auth';
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Trophy, TvIcon, User, X } from "lucide-react";
+import { getCHZPricePyth } from "@/app/actions/getCHZPricePyth";
+import { useBalance } from "wagmi";
 
 export function Header() {
     const router = useRouter();
     const { login } = useLogin();
     const { ready, authenticated } = usePrivy();
+    const [chzPrice, setChzPrice] = useState<number>(0);
+
+    const { wallets } = useWallets();
+
+    const address = wallets?.[0]?.address ?? "";
+
+    const fetchCHZPrice = async () => {
+        try {
+        const result = await getCHZPricePyth();
+        const parsed = result?.parsed?.[0]?.price;
+        if (parsed?.price && parsed?.expo) {
+            const priceInUsd = Number(parsed.price) * Math.pow(10, parsed.expo);
+            console.log("CHZ Price in USD:", priceInUsd);
+            setChzPrice(priceInUsd);
+        }
+        } catch (err) {
+        console.error("Error fetching CHZ price:", err);
+        }
+    };
+
+    // Fetch CHZ price on component mount
+    useEffect(() => {
+        fetchCHZPrice();
+    }
+    , []);
+
+    const { data: balanceData } = useBalance({
+        address: address as `0x{string}`,
+    });
 
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -56,12 +87,15 @@ export function Header() {
                             </button>
                         </div>
                         {authenticated && (
+                            // Balance in USD
+                            <>
                             <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                 <User />
                                 <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                     Profile
                                 </button>
                             </div>
+                            </>
                         )}
                     </nav>
 
@@ -90,6 +124,15 @@ export function Header() {
                                 </Button>
                             </>
                         ) : (
+                            // Dashboard Button
+                            <>
+                                <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
+                                    <span className="text-white/70 hover:text-white transition-colors cursor-pointer border border-white/20 px-2 py-1 rounded-lg">
+                                        {/* Display Wallet Address */}
+                                        {/* Wallet Balance in USD */}
+                                        {balanceData ? `$${(Number(balanceData.value) / 1e18 * chzPrice).toFixed(2)}` : "Loading..."}
+                                    </span>
+                                </div>
                                 <Button
                                     variant="outline"
                                     className="border-white/20 bg-primary text-white"
@@ -97,6 +140,7 @@ export function Header() {
                                 >
                                     Dashboard
                                 </Button>
+                            </>
                         )}
                     </div>
                 </div>

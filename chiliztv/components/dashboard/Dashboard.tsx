@@ -50,7 +50,7 @@ const mockUser = {
     username: "",
     walletAddress: "0x742d35Cc6634C0532925a3b8D3Ac92d9d3456789",
     totalTokens: 15,
-    totalBets: 127,
+    totalPredictions: 127,
     winRate: 68.5,
     totalWinnings: 2456.78,
 };
@@ -362,7 +362,7 @@ export function Dashboard() {
                         <Trophy className="w-4 h-4 text-yellow-500" />
                         Win Rate: {mockUser.winRate}%
                         </div>
-                        <span>Total Bets: {mockUser.totalBets}</span>
+                        <span>Total Predictions: {mockUser.totalPredictions}</span>
                     </div>
                     </div>
                 </div>
@@ -378,14 +378,14 @@ export function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <StatCard title="Fan Tokens" value={mockUser.totalTokens} icon={<Trophy className="w-6 h-6 text-primary" />} />
             <StatCard title="Portfolio Value" value={`$${formatNumber(totalTokenValue)}`} icon={<TrendingUp className="w-6 h-6 text-green-500" />} />
-            <StatCard title="Active Bets" value={7} icon={<History className="w-6 h-6 text-blue-500" />} />
+            <StatCard title="Active Predictions" value={7} icon={<History className="w-6 h-6 text-blue-500" />} />
             </div>
 
             {/* Tabs for main content */}
             <Tabs defaultValue="tokens" className="w-full">
             <TabsList className="grid grid-cols-2 w-full bg-[#1a1919] border-white/10 mb-4">
                 <TabsTrigger value="tokens" className="data-[state=active]:bg-primary">Fan Tokens</TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-primary">Betting History</TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-primary">Predictions History</TabsTrigger>
             </TabsList>
 
             {/* Fan Tokens */}
@@ -413,7 +413,7 @@ export function Dashboard() {
                 <CardHeader>
                     <CardTitle className="text-white flex items-center gap-2">
                     <History className="w-5 h-5 text-primary" />
-                    Recent Betting History
+                    Recent Predictions History
                     </CardTitle>
                 </CardHeader>
                 <CardContent>

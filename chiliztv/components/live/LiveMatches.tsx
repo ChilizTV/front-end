@@ -9,7 +9,7 @@ import { MatchService } from "@/services/match.service";
 import { IMatchId } from "@/models/match.model";
 import { useEffect, useState } from "react";
 
-type MatchStatus = "LIVE" | "BET_OPEN" | "ENDED";
+type MatchStatus = "LIVE" | "PREDICTION_OPEN" | "ENDED";
 
 interface MatchDisplay extends IMatchId {
     displayStatus: MatchStatus;
@@ -73,7 +73,7 @@ export default function LiveMatches() {
                         no: 2.10
                     }
                 },
-                displayStatus: "BET_OPEN",
+                displayStatus: "PREDICTION_OPEN",
                 time: "in 6h 30m",
                 logoA: "https://actufinance.fr/wp-content/uploads/2022/02/PSG.png",
                 logoB: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/FC_Internazionale_Milano_2021.svg/langfr-250px-FC_Internazionale_Milano_2021.svg.png",
@@ -127,7 +127,7 @@ export default function LiveMatches() {
         }
         
         if (now < matchDate) {
-            return "BET_OPEN";
+            return "PREDICTION_OPEN";
         }
         
         return "ENDED";
@@ -188,7 +188,7 @@ export default function LiveMatches() {
 
     const statusPriority: Record<MatchStatus, number> = {
         LIVE: 0,
-        BET_OPEN: 1,
+        PREDICTION_OPEN: 1,
         ENDED: 2,
     };
 
@@ -208,10 +208,10 @@ export default function LiveMatches() {
             glowColor: "shadow-red-500/20",
             animate: "animate-pulse",
             };
-        case "BET_OPEN":
+        case "PREDICTION_OPEN":
             return {
             icon: TrendingUp,
-            text: "BET OPEN",
+            text: "PREDICTION OPEN",
             bgColor: "bg-blue-500/10",
             textColor: "text-blue-400",
             borderColor: "border-blue-500/30",
@@ -235,7 +235,7 @@ export default function LiveMatches() {
         switch (status) {
         case "LIVE":
             return "bg-gradient-to-br from-red-950/40 via-gray-900/95 to-black/90 border-red-500/20 shadow-lg shadow-red-500/10";
-        case "BET_OPEN":
+        case "PREDICTION_OPEN":
             return "bg-gradient-to-br from-blue-950/40 via-gray-900/95 to-black/90 border-blue-500/20 shadow-lg shadow-blue-500/10";
         case "ENDED":
             return "bg-gradient-to-br from-gray-950/40 via-gray-900/95 to-black/90 border-gray-500/20 shadow-lg shadow-gray-500/10";
@@ -294,7 +294,7 @@ export default function LiveMatches() {
             </header>
 
             <section className="flex flex-wrap justify-center gap-6 mb-10">
-            {(["LIVE", "BET_OPEN", "ENDED"] as MatchStatus[]).map((status) => {
+            {(["LIVE", "PREDICTION_OPEN", "ENDED"] as MatchStatus[]).map((status) => {
                 const cfg = statusConfig(status);
                 const Icon = cfg.icon;
                 return (
@@ -330,10 +330,10 @@ export default function LiveMatches() {
                     </div>
                     )}
 
-                    {match.displayStatus === "BET_OPEN" && (
+                    {match.displayStatus === "PREDICTION_OPEN" && (
                     <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-blue-500/20 backdrop-blur-sm rounded-full text-xs font-medium text-blue-400 border border-blue-500/30">
                         <TrendingUp className="w-3 h-3" />
-                        <span>Betting Open</span>
+                        <span>Predictions Open</span>
                     </div>
                     )}
 
@@ -360,8 +360,8 @@ export default function LiveMatches() {
                         </div>
 
                         <div className="flex flex-col items-center min-w-[120px] px-6">
-                        <span className={`text-4xl font-bold transition-all duration-300 ${match.displayStatus === "BET_OPEN" ? "text-gray-600" : "text-white group-hover:scale-110 group-hover:text-blue-100"}`}>{formatScore(match)}</span>
-                        {match.displayStatus === "BET_OPEN" && <span className="text-sm text-gray-500 mt-1 font-medium">vs</span>}
+                        <span className={`text-4xl font-bold transition-all duration-300 ${match.displayStatus === "PREDICTION_OPEN" ? "text-gray-600" : "text-white group-hover:scale-110 group-hover:text-blue-100"}`}>{formatScore(match)}</span>
+                        {match.displayStatus === "PREDICTION_OPEN" && <span className="text-sm text-gray-500 mt-1 font-medium">vs</span>}
                         </div>
 
                         <div className="flex items-center gap-4 flex-1 justify-end relative">

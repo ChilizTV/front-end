@@ -3,7 +3,7 @@
 import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import BetDialog from "../bets/BetsDialog";
+import PredictionsDialog from "../predictions/PredictionsDialog";
 import { getFanToken } from "@/utils/FanTokens";
 import ChatBox from "./Chats";
 
@@ -22,8 +22,8 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
     const [TeamB, setTeamB] = useState("");
     const [matchInProgress] = useState(false);
 
-    const handleBetting = (team: string, amount: string) => {
-        console.log("Bet placed:", { team, amount });
+    const handlePrediction= (team: string, amount: string) => {
+        console.log("Prediction placed:", { team, amount });
     };
 
     const [commentators] = useState([
@@ -121,11 +121,11 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             </div>
             {!matchInProgress ? (
                 <>
-                <div className="text-xl font-bold mb-3 text-white drop-shadow-lg">Place Bet</div>
-                <BetDialog
+                <div className="text-xl font-bold mb-3 text-white drop-shadow-lg">Place Prediction</div>
+                <PredictionsDialog
                     isLoggedIn={authenticated}
                     onLogin={login}
-                    onBetPlaced={handleBetting}
+                    onpredictionPlaced={handlePrediction}
                     TeamA={TeamA}
                     TeamB={TeamB}
                     matchId={id}
@@ -136,7 +136,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                 </>
             ) : (
                 <div className="text-center text-yellow-400 font-semibold py-6 select-none">
-                Betting is closed while the match is in progress.
+                Predictions are closed while the match is in progress.
                 </div>
             )}
             </div>
