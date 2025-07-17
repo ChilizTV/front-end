@@ -1,8 +1,9 @@
-"use client"; // only if you’re in Next.js app router
+"use client";
 
 import React from "react";
 import { SelfQRcodeWrapper, SelfAppBuilder } from "@selfxyz/qrcode";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { countries } from "@selfxyz/core";
 
 interface SelfProtocolQRCodeProps {
   onClose?: () => void;
@@ -10,7 +11,7 @@ interface SelfProtocolQRCodeProps {
 
 export default function SelfProtocolQRCode({
   onClose,
-}: SelfProtocolQRCodeProps) {
+}: Readonly<SelfProtocolQRCodeProps>) {
 
   const { primaryWallet } = useDynamicContext();
   const userId = primaryWallet?.address ?? "";
@@ -29,14 +30,14 @@ export default function SelfProtocolQRCode({
     version: 2,
     appName: "ChilizTV",
     scope: "chiliztv",
-    logoBase64: "https://chiliztv.vercel.app/chiliz_icon.png",
-    endpoint: "https://chiliztv.vercel.app/api/verifier",
+    logoBase64: "https://chiliztv.com/chiliz_icon.png",
+    endpoint: "https://chiliztv.com/api/verifier",
     endpointType: "staging_https",
     userId,
     userIdType: "hex",
     disclosures: {
       minimumAge: 18,
-      excludedCountries: ["IRN", "PRK"],
+      excludedCountries: [countries.FRANCE, countries.IRAN, countries.NORTH_KOREA],
       ofac: true,
       name: true,
       nationality: true,
@@ -76,6 +77,7 @@ export default function SelfProtocolQRCode({
           <SelfQRcodeWrapper
             selfApp={selfApp}
             onSuccess={handleSuccessfulVerification}
+            darkMode={true}
             onError={() => {
               console.error("Error: Failed to verify identity");
             }}

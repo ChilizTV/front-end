@@ -11,76 +11,81 @@ import { WagmiProviderWrapper } from "./WagmiProviderWrapper";
 
 export const sidebarCss = `
     @media (min-width: 768px) {
-        .accordion-item {
-            max-height: 100vh !important;
-        }
+    .accordion-item {
+        max-height: 100vh !important;
+    }
 
-        .modal, .dynamic-widget-modal, .dynamic-widget-card {
-            right: 0 !important;
-            top: 0 !important;
-            transform: none !important;
-            height: 100vh !important;
-            border-radius: 0 !important;
-            left: auto !important;
-            background-color: #020817 !important; /* Updated background */
-            color: #ffffff !important; /* Ensuring text contrast */
-        }
+    .modal,
+    .dynamic-widget-modal,
+    .dynamic-widget-card {
+        right: 0 !important;
+        top: 0 !important;
+        transform: none !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+        left: auto !important;
+        background-color: rgb(121, 37, 41) !important; /* Deep red background */
+        color: #ffffff !important;
+    }
 
-        .wallet-list__scroll-container {
-            max-height: 80vh !important;
-            background-color: #020817 !important; /* Updated background */
-        }
+    .wallet-list__scroll-container,
+    .settings-view__body,
+    .modal-card,
+    .dynamic-widget-card,
+    .social-redirect-view__container,
+    .wallet-no-access__container,
+    .pending-signature__container,
+    .pending-connect__container,
+    .footer-options-switcher__container,
+    .dynamic-user-profile-layout,
+    .dynamic-footer,
+    .tos-and-pp__footer {
+        background-color:transparent !important; /* Solid black */
+        color: transparent !important;
+    }
 
-        .settings-view__body {
-            height: auto !important;
-            background-color: #020817 !important; /* Updated background */
-            color: #ffffff !important; /* Ensuring text contrast */
-        }
+    .modal-card,
+    .dynamic-widget-card {
+        background: linear-gradient(to bottom, rgb(121, 37, 41), rgb(121, 37, 41)) !important;
+    }
 
-        .modal-card, .dynamic-widget-card {
-            border-radius: 0 !important;
-            background: linear-gradient(to bottom, #020817, #020817) !important; /* Single tone gradient */
-        }
+    .social-redirect-view__container,
+    .wallet-no-access__container,
+    .pending-signature__container,
+    .pending-connect__container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin-top: -15%;
+    }
 
-        .social-redirect-view__container, .wallet-no-access__container, .pending-signature__container, .pending-connect__container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin-top: -15%;
-            background-color: #020817 !important; /* Updated background */
-            color: #ffffff !important; /* Ensuring text contrast */
-        }
+    .footer-options-switcher__container {
+        border-radius: 0 !important;
+        position: absolute !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
 
-        .footer-options-switcher__container {
-            border-radius: 0 !important;
-            position: absolute !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            background-color: #020817 !important; /* Updated background */
-        }
+    .dynamic-user-profile-layout {
+        height: 90vh !important;
+    }
 
-        .dynamic-user-profile-layout {
-            height: 90vh !important;
-            background-color: #020817 !important; /* Updated background */
-            color: #ffffff !important; /* Ensuring text contrast */
-        }
+    .dynamic-footer,
+    .tos-and-pp__footer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+    }
 
-        .dynamic-footer, .tos-and-pp__footer {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            background-color: #020817 !important; /* Updated background */
-            color: #ffffff !important; /* Ensuring text contrast */
-        }
-
-        .tos-and-pp__footer {
-            bottom: 30px !important;
-        }
+    .tos-and-pp__footer {
+        bottom: 30px !important;
+    }
     }
 `;
+
 
 
 export default function DynamicSolanaWalletProvider({ children }: Readonly<{ children: React.ReactNode }>) {

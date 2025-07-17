@@ -45,10 +45,6 @@ export function Header() {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-    if (!primaryWallet) {
-        return null; // or a loading state
-    }
-
     const dropdownVariants = {
         hidden: { opacity: 0, height: 0 },
         visible: { opacity: 1, height: "auto" },
