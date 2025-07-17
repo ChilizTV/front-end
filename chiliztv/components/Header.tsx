@@ -4,21 +4,20 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useLogin, usePrivy, useWallets} from '@privy-io/react-auth';
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Trophy, TvIcon, User, X } from "lucide-react";
 import { getCHZPricePyth } from "@/app/actions/getCHZPricePyth";
 import { useBalance } from "wagmi";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 export function Header() {
     const router = useRouter();
-    const { login } = useLogin();
-    const { ready, authenticated } = usePrivy();
+    const { setShowAuthFlow, primaryWallet } = useDynamicContext();
     const [chzPrice, setChzPrice] = useState<number>(0);
 
-    const { wallets } = useWallets();
+    const connected = Boolean(primaryWallet?.address);
 
-    const address = wallets?.[0]?.address ?? "";
+    const address = primaryWallet?.address || "";
 
     const fetchCHZPrice = async () => {
         try {
@@ -46,7 +45,9 @@ export function Header() {
 
     const [menuOpen, setMenuOpen] = useState(false);
 
-    if (!ready) return null;
+    if (!primaryWallet) {
+        return null; // or a loading state
+    }
 
     const dropdownVariants = {
         hidden: { opacity: 0, height: 0 },
@@ -74,28 +75,44 @@ export function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className="hidden md:flex flex-row gap-[38px] items-center text-[16px]">
-                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
+                        <button
+                            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer"
+                            onClick={() => router.push("/live")}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    router.push("/live");
+                                }
+                            }}
+                        >
                             <TvIcon /> 
                             <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/live")}>
                                 Browse Matches
                             </button>
-                        </div>
-                        <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/leaderboard")}>
+                        </button>
+                        <button
+                            className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer"
+                            onClick={() => router.push("/leaderboard")}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    router.push("/leaderboard");
+                                }
+                            }}
+                        >
                             <Trophy />
                             <button className="text-white/70 hover:text-white transition-colors cursor-pointer">
                                 Leaderboard
                             </button>
-                        </div>
-                        {authenticated && (
+                        </button>
+                        {connected && (
                             // Balance in USD
-                            <>
-                            <div className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
+                            <button className="flex items-center gap-2 text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                 <User />
                                 <button className="text-white/70 hover:text-white transition-colors cursor-pointer" onClick={() => router.push("/dashboard")}>
                                     Profile
                                 </button>
-                            </div>
-                            </>
+                            </button>
                         )}
                     </nav>
 
@@ -106,19 +123,19 @@ export function Header() {
 
                     {/* Auth Buttons (Desktop) */}
                     <div className="hidden md:flex items-center gap-4">
-                        {!authenticated ? (
+                        {!connected ? (
                             <>
                                 <Button
                                     variant="outline"
                                     className="border-white/20 hover:border-white hover:text-white bg-primary text-white"
-                                    onClick={() => login()}
+                                    onClick={() => setShowAuthFlow(true)}
                                 >
                                     Login
                                 </Button>
                                 <Button
                                     variant="ghost"
                                     className="hover:border-white text-white"
-                                    onClick={() => login()}
+                                    onClick={() => setShowAuthFlow(true)}
                                 >
                                     Sign Up
                                 </Button>
@@ -174,7 +191,7 @@ export function Header() {
                             >
                                 Leaderboard
                             </button>
-                            {authenticated && (
+                            {connected && (
                                 <button
                                     onClick={() => {
                                         router.push("/dashboard");
@@ -186,7 +203,7 @@ export function Header() {
                                 </button>
                             )}
                             <div className="border-t border-white/10 pt-4 flex flex-col gap-3">
-                                {authenticated ? (
+                                {connected ? (
                                         <Button
                                             variant="outline"
                                             className="border-white/20 bg-primary text-white"
@@ -203,7 +220,7 @@ export function Header() {
                                             variant="outline"
                                             className="border-white/20 hover:border-white hover:text-white bg-primary text-white"
                                             onClick={() => {
-                                                login();
+                                                setShowAuthFlow(true);
                                                 setMenuOpen(false);
                                             }}
                                         >
@@ -213,7 +230,7 @@ export function Header() {
                                             variant="outline"
                                             className="border-white/20 hover:border-white bg-secondary hover:text-white"
                                             onClick={() => {
-                                                login();
+                                                setShowAuthFlow(true);
                                                 setMenuOpen(false);
                                             }}
                                         >

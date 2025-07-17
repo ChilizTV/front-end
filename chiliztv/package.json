@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^2.18.0",
+    "@dynamic-labs/ethereum": "^4.25.0",
+    "@dynamic-labs/sdk-react-core": "^4.25.0",
+    "@dynamic-labs/wagmi-connector": "^4.25.0",
     "@pythnetwork/hermes-client": "^2.0.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",

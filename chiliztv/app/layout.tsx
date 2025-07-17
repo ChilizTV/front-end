@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Lexend } from "next/font/google";
-import { PrivyWrapper } from "@/components/providers/PrivyWrapper";
-import { WagmiProviderWrapper } from "@/components/providers/WagmiProviderWrapper";
+import DynamicProviderWrapper from "@/components/providers/DynamicProviderWrapper";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -29,12 +28,9 @@ export default function RootLayout({
       <body
         className={`${lexend.className} antialiased bg-black`}
       >
-        <WagmiProviderWrapper>
-            {/* Add any additional providers here if needed */}
-            <PrivyWrapper>
-              {children}
-            </PrivyWrapper>
-        </WagmiProviderWrapper>
+        <DynamicProviderWrapper>
+          {children}
+        </DynamicProviderWrapper>
       </body>
     </html>
   );

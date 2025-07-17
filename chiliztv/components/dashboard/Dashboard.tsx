@@ -43,12 +43,12 @@ import {
 } from "lucide-react";
 
 import SelfProtocolQRCode from "../selfProtcol/SelfProtocolQRCode";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useUserUpdateRequest, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 // Mock data
 const mockUser = {
-    username: "",
-    walletAddress: "0x742d35Cc6634C0532925a3b8D3Ac92d9d3456789",
+    username: "Disconnected",
+    walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
     totalTokens: 15,
     totalPredictions: 127,
     winRate: 68.5,
@@ -157,7 +157,14 @@ const mockFanTokens = [
 ];
 
 export function Dashboard() {
-    const [username, setUsername] = useState(mockUser.username);
+    const [username, setUsername] = useState("Unknown User");
+
+    interface UserMetadata {
+        winRate?: number;
+    }
+
+    const { primaryWallet, user } = useDynamicContext();
+    const { updateUserWithModal } = useUserUpdateRequest();
     const [tempUsername, setTempUsername] = useState(username);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -165,9 +172,6 @@ export function Dashboard() {
     const [error, setError] = useState<string | null>(null);
 
     const [showVerificationDialog, setShowVerificationDialog] = useState(false);
-
-    const { user, authenticated} = usePrivy();
-    const { wallets } = useWallets();
 
     const [isClient, setIsClient] = useState(false);
 
@@ -183,10 +187,9 @@ export function Dashboard() {
     };
 
     useEffect(() => {
-        if (user?.customMetadata?.username && !username) {
-            const usernameValue = typeof user.customMetadata.username === "string" ? user.customMetadata.username : "";
-            setUsername(usernameValue);
-            setTempUsername(usernameValue);
+        if (user?.username) {
+            setUsername(user.username);
+            setTempUsername(user.username);
         }
     }, [user, username]);
 
@@ -201,39 +204,30 @@ export function Dashboard() {
         setIsLoading(true);
         setError(null);
 
-        if (!authenticated || !user) {
+        if (!primaryWallet || !user) {
             setError("You must be logged in to update your username.");
             setIsLoading(false);
             return;
         }
     
         try {
-            const response = await fetch("/api/username/update", {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userDid: user.id, // user's DID from Privy
-                    customMetadata: { username: newUsername, isVerified: true }, // send as customMetadata
-                }),
+            updateUserWithModal(['username']).then(() => {
+                setUsername(newUsername);
+                setTempUsername(newUsername);
+                setIsDialogOpen(false);
+                setError(null);
+                setIsLoading(false);
+            }).catch((err) => {
+                console.error("Error updating username:", err);
+                setError(err instanceof Error ? err.message : "An unexpected error occurred");
+                setIsLoading(false);
+                setIsDialogOpen(false);
             });
-        
-            const data = await response.json();
-        
-            if (!response.ok) {
-                throw new Error(data.reason ?? "Failed to update username");
-            }
-    
-            setUsername(newUsername);
-            console.log(`Username updated to: ${newUsername}`);
-            setIsDialogOpen(false);
-      }
-        catch (error) {
-            console.error("Error updating username:", error);
+        } catch (error) {
+            console.error("Error showing user profile:", error);
             setError(error instanceof Error ? error.message : "An unexpected error occurred");
-        } finally {
             setIsLoading(false);
+            return;
         }
     }
 
@@ -252,7 +246,7 @@ export function Dashboard() {
                 Profile
                 </h1>
                 <p className="text-white/70 text-sm">
-                Welcome back, {user?.customMetadata?.username ?? username}!
+                Welcome back, {user ? user.username || "Unknown User" : "Guest"}!
                 </p>
             </div>
             <div className="flex items-center gap-2">
@@ -295,72 +289,73 @@ export function Dashboard() {
                             </Button>
                         </DialogTrigger>
                         <DialogContent className="bg-[#1a1919] border border-white/20 rounded-lg max-w-md mx-auto">
-  <DialogHeader className="pb-2 border-b border-white/10">
-    <DialogTitle className="text-white text-lg font-semibold" style={{ fontFamily: 'Lexend, sans-serif' }}>
-      Update Username
-    </DialogTitle>
-  </DialogHeader>
+                        <DialogHeader className="pb-2 border-b border-white/10">
+                            <DialogTitle className="text-white text-lg font-semibold" style={{ fontFamily: 'Lexend, sans-serif' }}>
+                            Update Username
+                            </DialogTitle>
+                        </DialogHeader>
 
-  <div className="mt-4 space-y-4">
-    <div>
-      <Label htmlFor="username" className="text-white/80 mb-1 block font-medium">
-        New Username
-      </Label>
-      <Input
-        id="username"
-        value={tempUsername}
-        onChange={(e) => setTempUsername(e.target.value)}
-        className="bg-white/10 border-white/30 text-white placeholder-white/50 focus:border-primary focus:ring-primary"
-        placeholder="Enter your new username"
-        disabled={isLoading}
-        autoFocus
-      />
-    </div>
+                        <div className="mt-4 space-y-4">
+                            <div>
+                            <Label htmlFor="username" className="text-white/80 mb-1 block font-medium">
+                                New Username
+                            </Label>
+                            <Input
+                                id="username"
+                                value={tempUsername}
+                                onChange={(e) => setTempUsername(e.target.value)}
+                                className="bg-white/10 border-white/30 text-white placeholder-white/50 focus:border-primary focus:ring-primary"
+                                placeholder="Enter your new username"
+                                disabled={isLoading}
+                                autoFocus
+                            />
+                            </div>
 
-    {error && (
-      <p className="text-sm text-red-500 font-medium select-none" role="alert">
-        {error}
-      </p>
-    )}
+                            {error && (
+                            <p className="text-sm text-red-500 font-medium select-none" role="alert">
+                                {error}
+                            </p>
+                            )}
 
-    <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
-      <Button
-        variant="outline"
-        onClick={() => {
-          setIsDialogOpen(false);
-          setTempUsername(username); // reset on cancel
-          setError(null);
-        }}
-        disabled={isLoading}
-        className="border-white/30 text-white/70 hover:text-white hover:border-primary transition"
-      >
-        Cancel
-      </Button>
+                            <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                setIsDialogOpen(false);
+                                setTempUsername(username); // reset on cancel
+                                setError(null);
+                                }}
+                                disabled={isLoading}
+                                className="border-white/30 text-white/70 hover:text-white hover:border-primary transition"
+                            >
+                                Cancel
+                            </Button>
 
-      <Button
-        onClick={handleUsernameUpdate}
-        disabled={isLoading || tempUsername.trim() === "" || tempUsername === username}
-        className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? "Updating..." : "Update"}
-      </Button>
-    </div>
-  </div>
+                            <Button
+                                onClick={handleUsernameUpdate}
+                                disabled={isLoading || tempUsername.trim() === "" || tempUsername === username}
+                                className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isLoading ? "Updating..." : "Update"}
+                            </Button>
+                            </div>
+                        </div>
                         </DialogContent>
                         </Dialog>
                     </div>
                     <div className="text-white/60 text-sm font-mono truncate max-w-[220px]">
                         <Wallet className="inline-block w-4 h-4 mr-1" />
-                        {wallets.length > 0 ? (
-                        wallets[0].address
+                        {primaryWallet?.address ? (
+                            `Win Rate: ${(user?.metadata as UserMetadata)?.winRate ?? "N/A"}%`
                         ) : (
-                        <span className="text-red-500">No wallet connected</span>
+                            <span className="text-red-500">No wallet connected</span>
                         )}
+
                     </div>
                     <div className="text-sm text-white/70 flex gap-4 mt-1">
                         <div className="flex items-center gap-1">
                         <Trophy className="w-4 h-4 text-yellow-500" />
-                        Win Rate: {mockUser.winRate}%
+                            Win Rate: ${(user?.metadata as UserMetadata)?.winRate ?? "N/A"}%
                         </div>
                         <span>Total Predictions: {mockUser.totalPredictions}</span>
                     </div>

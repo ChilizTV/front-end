@@ -15,7 +15,7 @@ const config = createConfig({
   },
 });
 
-export function WagmiProviderWrapper({ children }: { children: ReactNode }) {
+export function WagmiProviderWrapper({ children }: { readonly children: ReactNode }) {
     return (
         <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
