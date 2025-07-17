@@ -2,6 +2,7 @@
 
 import {
     DynamicContextProvider,
+    SortWallets,
 } from "@dynamic-labs/sdk-react-core";
 import { EthereumWalletConnectors } from "@dynamic-labs/ethereum";
 import * as React from "react";
@@ -94,6 +95,7 @@ export default function DynamicSolanaWalletProvider({ children }: Readonly<{ chi
                     : process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID ?? "",
                 walletConnectors: [EthereumWalletConnectors],
                 cssOverrides: sidebarCss,
+                walletsFilter: SortWallets(['socios', 'metamask', 'coinbase', 'walletconnect', 'phantom']),
                 events: {
                     onLogout: (args) => {
                         console.log("Logged out", args);

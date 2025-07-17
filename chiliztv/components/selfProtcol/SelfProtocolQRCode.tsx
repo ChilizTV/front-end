@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SelfQRcodeWrapper, SelfAppBuilder } from "@selfxyz/qrcode";
-import { useWallets } from "@privy-io/react-auth";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 interface SelfProtocolQRCodeProps {
   onClose?: () => void;
@@ -11,8 +11,9 @@ interface SelfProtocolQRCodeProps {
 export default function SelfProtocolQRCode({
   onClose,
 }: SelfProtocolQRCodeProps) {
-  const { wallets } = useWallets();
-  const userId = wallets.length > 0 ? wallets[0].address : undefined;
+
+  const { primaryWallet } = useDynamicContext();
+  const userId = primaryWallet?.address ?? "";
 
   const handleClose = () => {
     onClose?.();

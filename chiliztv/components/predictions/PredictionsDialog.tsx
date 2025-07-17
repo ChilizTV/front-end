@@ -20,7 +20,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagm
 import { CONTRACTS_ADDRESSES } from "@/utils/ContractsAddresses";
 import { parseEther } from "viem";
 import { BETTING_ABI } from "@/lib/abis/bettingAbi";
-import { useWallets } from "@privy-io/react-auth";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { ChatService } from "@/services/chat.service";
 import Confetti from "react-confetti";
 
@@ -56,9 +56,9 @@ export default function PredictionsDialog({
     const [showConfetti, setShowConfetti] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
-    const { wallets } = useWallets();
+    const { primaryWallet: wallets } = useDynamicContext();
 
-    const user = wallets?.[0]?.address ?? "";
+    const user = wallets?.address ?? "";
 
     const { data: balanceData } = useBalance({
         address: user as `0x{string}`,
