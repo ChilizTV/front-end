@@ -20,7 +20,7 @@ A modern, real-time sports predictions and streaming platform built with Next.js
 - **Featured messages** for users with 50+ fan tokens
 - **Prediciton messages** automatically featured
 - **System messages** for match events
-- **User authentication** with Privy
+- **User authentication** with Dynamic.xyz
 
 ### 🏆 Fan Token Integration
 - **Fan token balance** display in predictionning dialog
@@ -29,7 +29,7 @@ A modern, real-time sports predictions and streaming platform built with Next.js
 - **Half-time predictionning** requires 50+ fan tokens
 
 ### 👤 User Management
-- **Web3 authentication** with Privy
+- **Web3 authentication** with Dynamic.xyz
 - **Wallet integration** with Chiliz testnet
 - **User profiles** with predictionning statistics
 - **Username customization** with verification
@@ -43,7 +43,7 @@ A modern, real-time sports predictions and streaming platform built with Next.js
 - **Tailwind CSS** - Utility-first styling
 
 ### Web3 & Blockchain
-- **Privy** - Web3 authentication
+- **Dynamic.xyz** - Web3 authentication
 - **Wagmi** - React hooks for Ethereum
 - **Viem** - TypeScript interface for Ethereum
 - **Chiliz Testnet** - Sports blockchain integration
@@ -77,8 +77,9 @@ cp .env.example .env.local
 Required environment variables:
 ```env
 # Privy Authentication
-NEXT_PUBLIC_PRIVY_PROJECT_ID=your_privy_project_id
-NEXT_PUBLIC_PRIVY_CLIENT_ID=your_privy_client_id
+NEXT_PUBLIC_STAGING_DYNAMIC_ENVIRONMENT_ID = 
+NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID = 
+NEXT_PUBLIC_STAGING = 
 
 # Backend API
 NEXT_PUBLIC_API_URL=http://localhost:3000
@@ -103,8 +104,9 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 | Variable | Description | Required |
 |----------|-------------|----------|
-| `NEXT_PUBLIC_PRIVY_PROJECT_ID` | Privy project ID | Yes |
-| `NEXT_PUBLIC_PRIVY_CLIENT_ID` | Privy client ID | Yes |
+| `NEXT_PUBLIC_STAGING_DYNAMIC_ENVIRONMENT_ID` | Dynamic Staging ID | Yes |
+| `NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID` | Dynamic Prod ID client ID | Yes |
+| `NEXT_PUBLIC_STAGING = ` | Staging (True || False) | Yes |
 | `NEXT_PUBLIC_API_URL` | Backend API URL | Yes |
 | `NEXT_PUBLIC_URL` | Frontend URL for Vercel | Yes |
 
