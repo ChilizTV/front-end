@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogin, usePrivy, useWallets } from "@privy-io/react-auth";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import PredictionsDialog from "../predictions/PredictionsDialog";
@@ -12,11 +12,9 @@ interface LiveDetailsPageProps {
 }
 
 export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
-    const { login } = useLogin();
-    const { authenticated, user } = usePrivy();
-    const { wallets } = useWallets();
+    const { primaryWallet, user, setShowAuthFlow } = useDynamicContext();
 
-    const walletAddress = wallets?.[0]?.address ?? "";
+    const walletAddress = primaryWallet?.address ?? "";
 
     const [TeamA, setTeamA] = useState("");
     const [TeamB, setTeamB] = useState("");
@@ -123,14 +121,14 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
                 <>
                 <div className="text-xl font-bold mb-3 text-white drop-shadow-lg">Place Prediction</div>
                 <PredictionsDialog
-                    isLoggedIn={authenticated}
-                    onLogin={login}
+                    isLoggedIn={!!primaryWallet?.address}
+                    onLogin={() => setShowAuthFlow(true)}
                     onpredictionPlaced={handlePrediction}
                     TeamA={TeamA}
                     TeamB={TeamB}
                     matchId={id}
-                    userId={user?.id ?? ""}
-                    username={String(user?.customMetadata?.username ?? "")}
+                    userId={user?.userId ?? ""}
+                    username={String(user?.username ?? "")}
                     walletAddress={walletAddress}
                 />
                 </>
@@ -146,7 +144,7 @@ export default function LiveDetailsPage({ id }: LiveDetailsPageProps) {
             </div>
 
             {/* Chat */}
-            <ChatBox matchId={id} userId={user?.id ?? ""} username={String(user?.customMetadata?.username ?? "")} walletAddress={walletAddress} />
+            <ChatBox matchId={id} userId={user?.userId ?? ""} username={String(user?.username ?? "")} walletAddress={walletAddress} />
         </div>
         </div>
     );

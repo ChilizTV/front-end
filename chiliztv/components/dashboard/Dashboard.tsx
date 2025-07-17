@@ -9,15 +9,6 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
     Table,
     TableBody,
     TableCell,
@@ -43,12 +34,12 @@ import {
 } from "lucide-react";
 
 import SelfProtocolQRCode from "../selfProtcol/SelfProtocolQRCode";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { useUserUpdateRequest, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 // Mock data
 const mockUser = {
-    username: "",
-    walletAddress: "0x742d35Cc6634C0532925a3b8D3Ac92d9d3456789",
+    username: "Disconnected",
+    walletAddress: "0x1234567890abcdef1234567890abcdef12345678",
     totalTokens: 15,
     totalPredictions: 127,
     winRate: 68.5,
@@ -56,186 +47,137 @@ const mockUser = {
 };
 
 const mockFanTokens = [
-    {
-        id: 1,
-        team: "Manchester United",
-        symbol: "MUFC",
-        quantity: 250,
-        currentPrice: 12.45,
-        change: 5.2,
-        logo: "https://images.unsplash.com/photo-1566577134815-6d8b89e60e11?w=60&h=60&fit=crop&crop=center",
-    },
-    {
-        id: 2,
-        team: "FC Barcelona",
-        symbol: "BAR",
-        quantity: 180,
-        currentPrice: 18.92,
-        change: -2.8,
-        logo: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=60&h=60&fit=crop&crop=center",
-    },
-    {
-        id: 3,
-        team: "Real Madrid",
-        symbol: "REAL",
-        quantity: 320,
-        currentPrice: 22.15,
-        change: 8.7,
-        logo: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=60&h=60&fit=crop&crop=center",
-    },
-    {
-        id: 4,
-        team: "Liverpool FC",
-        symbol: "LFC",
-        quantity: 150,
-        currentPrice: 16.33,
-        change: 3.1,
-        logo: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=60&h=60&fit=crop&crop=center",
-    },
-    {
-        id: 5,
-        team: "Chelsea FC",
-        symbol: "CHE",
-        quantity: 200,
-        currentPrice: 14.87,
-        change: -1.5,
-        logo: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=60&h=60&fit=crop&crop=center",
-    },
-    ];
+  {
+    id: 1,
+    team: "Manchester United",
+    symbol: "MUFC",
+    quantity: 250,
+    currentPrice: 12.45,
+    change: 5.2,
+    logo: "https://images.unsplash.com/photo-1566577134815-6d8b89e60e11?w=60&h=60&fit=crop&crop=center",
+  },
+  {
+    id: 2,
+    team: "FC Barcelona",
+    symbol: "BAR",
+    quantity: 180,
+    currentPrice: 18.92,
+    change: -2.8,
+    logo: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=60&h=60&fit=crop&crop=center",
+  },
+  {
+    id: 3,
+    team: "Real Madrid",
+    symbol: "REAL",
+    quantity: 320,
+    currentPrice: 22.15,
+    change: 8.7,
+    logo: "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=60&h=60&fit=crop&crop=center",
+  },
+  {
+    id: 4,
+    team: "Liverpool FC",
+    symbol: "LFC",
+    quantity: 150,
+    currentPrice: 16.33,
+    change: 3.1,
+    logo: "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=60&h=60&fit=crop&crop=center",
+  },
+  {
+    id: 5,
+    team: "Chelsea FC",
+    symbol: "CHE",
+    quantity: 200,
+    currentPrice: 14.87,
+    change: -1.5,
+    logo: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=60&h=60&fit=crop&crop=center",
+  },
+];
 
-    const mockBettingHistory = [
-    {
-        id: 1,
-        date: "2025-01-10",
-        match: "Manchester United vs Arsenal",
-        bet: "Man United Win",
-        stake: 50,
-        odds: 2.4,
-        result: "Won",
-        payout: 120,
-    },
-    {
-        id: 2,
-        date: "2025-01-09",
-        match: "Barcelona vs Real Madrid",
-        bet: "Over 2.5 Goals",
-        stake: 75,
-        odds: 1.8,
-        result: "Won",
-        payout: 135,
-    },
-    {
-        id: 3,
-        date: "2025-01-08",
-        match: "Liverpool vs Chelsea",
-        bet: "Liverpool Win",
-        stake: 100,
-        odds: 1.9,
-        result: "Lost",
-        payout: 0,
-    },
-    {
-        id: 4,
-        date: "2025-01-07",
-        match: "PSG vs Monaco",
-        bet: "Both Teams to Score",
-        stake: 30,
-        odds: 1.6,
-        result: "Won",
-        payout: 48,
-    },
-    {
-        id: 5,
-        date: "2025-01-06",
-        match: "Bayern Munich vs Dortmund",
-        bet: "Win against Dortmund",
-        stake: 60,
-        odds: 2.1,
-        result: "Lost",
-        payout: 0,
-    },
+const mockBettingHistory = [
+  {
+    id: 1,
+    date: "2025-01-10",
+    match: "Manchester United vs Arsenal",
+    bet: "Man United Win",
+    stake: 50,
+    odds: 2.4,
+    result: "Won",
+    payout: 120,
+  },
+  {
+    id: 2,
+    date: "2025-01-09",
+    match: "Barcelona vs Real Madrid",
+    bet: "Over 2.5 Goals",
+    stake: 75,
+    odds: 1.8,
+    result: "Won",
+    payout: 135,
+  },
+  {
+    id: 3,
+    date: "2025-01-08",
+    match: "Liverpool vs Chelsea",
+    bet: "Liverpool Win",
+    stake: 100,
+    odds: 1.9,
+    result: "Lost",
+    payout: 0,
+  },
+  {
+    id: 4,
+    date: "2025-01-07",
+    match: "PSG vs Monaco",
+    bet: "Both Teams to Score",
+    stake: 30,
+    odds: 1.6,
+    result: "Won",
+    payout: 48,
+  },
+  {
+    id: 5,
+    date: "2025-01-06",
+    match: "Bayern Munich vs Dortmund",
+    bet: "Win against Dortmund",
+    stake: 60,
+    odds: 2.1,
+    result: "Lost",
+    payout: 0,
+  },
 ];
 
 export function Dashboard() {
-    const [username, setUsername] = useState(mockUser.username);
-    const [tempUsername, setTempUsername] = useState(username);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
+    const [username, setUsername] = useState("Unknown User");
     const [showVerificationDialog, setShowVerificationDialog] = useState(false);
-
-    const { user, authenticated} = usePrivy();
-    const { wallets } = useWallets();
-
     const [isClient, setIsClient] = useState(false);
 
-    // Fix hydration issues by ensuring we're on client side
+    interface UserMetadata {
+        winRate?: number;
+    }
+
+    interface User {
+        username?: string;
+        metadata?: UserMetadata;
+    }
+
+    const { primaryWallet, user } = useDynamicContext() as { primaryWallet?: { address?: string }; user?: User };
+    const { updateUserWithModal } = useUserUpdateRequest();
+
     useEffect(() => {
         setIsClient(true);
     }, []);
 
-    // Custom number formatting function that doesn't depend on locale
-    const formatNumber = (num: number) => {
-        if (!isClient) return num.toString(); // Return simple string on server
-        return num.toLocaleString('en-US'); // Use consistent locale on client
-    };
-
     useEffect(() => {
-        if (user?.customMetadata?.username && !username) {
-            const usernameValue = typeof user.customMetadata.username === "string" ? user.customMetadata.username : "";
-            setUsername(usernameValue);
-            setTempUsername(usernameValue);
+        if (user?.username) {
+        setUsername(user.username);
         }
-    }, [user, username]);
+    }, [user]);
 
-    async function handleUsernameUpdate() {
-        const newUsername = tempUsername.trim();
-
-        if (!newUsername || newUsername === username) {
-            setIsDialogOpen(false);
-            return;
-        }
-    
-        setIsLoading(true);
-        setError(null);
-
-        if (!authenticated || !user) {
-            setError("You must be logged in to update your username.");
-            setIsLoading(false);
-            return;
-        }
-    
-        try {
-            const response = await fetch("/api/username/update", {
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    userDid: user.id, // user's DID from Privy
-                    customMetadata: { username: newUsername, isVerified: true }, // send as customMetadata
-                }),
-            });
-        
-            const data = await response.json();
-        
-            if (!response.ok) {
-                throw new Error(data.reason ?? "Failed to update username");
-            }
-    
-            setUsername(newUsername);
-            console.log(`Username updated to: ${newUsername}`);
-            setIsDialogOpen(false);
-      }
-        catch (error) {
-            console.error("Error updating username:", error);
-            setError(error instanceof Error ? error.message : "An unexpected error occurred");
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    const formatNumber = (num: number) => {
+        if (!isClient) return num.toString();
+        return num.toLocaleString("en-US");
+    };
 
     const totalTokenValue = mockFanTokens.reduce(
         (sum, token) => sum + token.quantity * token.currentPrice,
@@ -248,29 +190,26 @@ export function Dashboard() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-                <h1 className="text-3xl font-bold mb-1" style={{ fontFamily: "Lexend, sans-serif" }}>
+                <h1 className="text-3xl font-bold mb-1">
                 Profile
                 </h1>
                 <p className="text-white/70 text-sm">
-                Welcome back, {user?.customMetadata?.username ?? username}!
+                Welcome back, {user ? user.username || "Unknown User" : "Guest"}!
                 </p>
             </div>
             <div className="flex items-center gap-2">
-            <Badge className="bg-primary/20 text-primary border-primary/30">
-                VIP Member
-            </Badge>
-            <Button
+                <Badge className="bg-primary/20 text-primary border-primary/30">VIP Member</Badge>
+                <Button
                 variant="ghost"
                 size="sm"
                 className="text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors duration-150 rounded-full px-3 py-1"
                 onClick={() => setShowVerificationDialog(true)}
-            >
-            Verify to Withdraw
-            </Button>
-
-            {showVerificationDialog && (
+                >
+                Verify to Withdraw
+                </Button>
+                {showVerificationDialog && (
                 <SelfProtocolQRCode onClose={() => setShowVerificationDialog(false)} />
-            )}
+                )}
             </div>
             </div>
 
@@ -288,71 +227,21 @@ export function Dashboard() {
                     <div>
                     <div className="flex items-center gap-2">
                         <h2 className="text-xl text-white font-bold">{username}</h2>
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="p-1 text-white/60 hover:text-white">
-                            <Edit className="w-4 h-4" />
-                            </Button>
-                        </DialogTrigger>
-                        <DialogContent className="bg-[#1a1919] border border-white/20 rounded-lg max-w-md mx-auto">
-  <DialogHeader className="pb-2 border-b border-white/10">
-    <DialogTitle className="text-white text-lg font-semibold" style={{ fontFamily: 'Lexend, sans-serif' }}>
-      Update Username
-    </DialogTitle>
-  </DialogHeader>
-
-  <div className="mt-4 space-y-4">
-    <div>
-      <Label htmlFor="username" className="text-white/80 mb-1 block font-medium">
-        New Username
-      </Label>
-      <Input
-        id="username"
-        value={tempUsername}
-        onChange={(e) => setTempUsername(e.target.value)}
-        className="bg-white/10 border-white/30 text-white placeholder-white/50 focus:border-primary focus:ring-primary"
-        placeholder="Enter your new username"
-        disabled={isLoading}
-        autoFocus
-      />
-    </div>
-
-    {error && (
-      <p className="text-sm text-red-500 font-medium select-none" role="alert">
-        {error}
-      </p>
-    )}
-
-    <div className="flex justify-end gap-3 pt-3 border-t border-white/10">
-      <Button
-        variant="outline"
-        onClick={() => {
-          setIsDialogOpen(false);
-          setTempUsername(username); // reset on cancel
-          setError(null);
-        }}
-        disabled={isLoading}
-        className="border-white/30 text-white/70 hover:text-white hover:border-primary transition"
-      >
-        Cancel
-      </Button>
-
-      <Button
-        onClick={handleUsernameUpdate}
-        disabled={isLoading || tempUsername.trim() === "" || tempUsername === username}
-        className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {isLoading ? "Updating..." : "Update"}
-      </Button>
-    </div>
-  </div>
-                        </DialogContent>
-                        </Dialog>
+                        <Button
+                        variant="ghost"
+                        size="sm"
+                        className="p-1 text-white/60 hover:text-white"
+                        onClick={() => updateUserWithModal(['username'])}
+                        >
+                        <Edit className="w-4 h-4" />
+                        </Button>
                     </div>
                     <div className="text-white/60 text-sm font-mono truncate max-w-[220px]">
                         <Wallet className="inline-block w-4 h-4 mr-1" />
-                        {wallets.length > 0 ? (
-                        wallets[0].address
+                        {primaryWallet?.address ? (
+                            <span className="break-all">
+                            {primaryWallet.address.slice(0, 6)}...{primaryWallet.address.slice(-4)}
+                            </span>
                         ) : (
                         <span className="text-red-500">No wallet connected</span>
                         )}
@@ -360,7 +249,7 @@ export function Dashboard() {
                     <div className="text-sm text-white/70 flex gap-4 mt-1">
                         <div className="flex items-center gap-1">
                         <Trophy className="w-4 h-4 text-yellow-500" />
-                        Win Rate: {mockUser.winRate}%
+                        Win Rate: {user?.metadata?.winRate ?? "N/A"}%
                         </div>
                         <span>Total Predictions: {mockUser.totalPredictions}</span>
                     </div>
@@ -374,21 +263,20 @@ export function Dashboard() {
             </CardContent>
             </Card>
 
-            {/* Stats Cards */}
+            {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <StatCard title="Fan Tokens" value={mockUser.totalTokens} icon={<Trophy className="w-6 h-6 text-primary" />} />
+            <StatCard title="Fan Tokens" value={mockUser.totalTokens} icon={<Trophy className="w-6 h-6 text-white" />} />
             <StatCard title="Portfolio Value" value={`$${formatNumber(totalTokenValue)}`} icon={<TrendingUp className="w-6 h-6 text-green-500" />} />
             <StatCard title="Active Predictions" value={7} icon={<History className="w-6 h-6 text-blue-500" />} />
             </div>
 
-            {/* Tabs for main content */}
+            {/* Tabs */}
             <Tabs defaultValue="tokens" className="w-full">
             <TabsList className="grid grid-cols-2 w-full bg-[#1a1919] border-white/10 mb-4">
-                <TabsTrigger value="tokens" className="data-[state=active]:bg-primary">Fan Tokens</TabsTrigger>
-                <TabsTrigger value="history" className="data-[state=active]:bg-primary">Predictions History</TabsTrigger>
+                <TabsTrigger value="tokens" className="data-[state=active]:bg-primary text-white">Fan Tokens</TabsTrigger>
+                <TabsTrigger value="history" className="data-[state=active]:bg-primary text-white">Predictions History</TabsTrigger>
             </TabsList>
 
-            {/* Fan Tokens */}
             <TabsContent value="tokens">
                 <Card className="bg-[#0f0f0f] border-white/10">
                 <CardHeader>
@@ -407,7 +295,6 @@ export function Dashboard() {
                 </Card>
             </TabsContent>
 
-            {/* Betting History */}
             <TabsContent value="history">
                 <Card className="bg-[#0f0f0f] border-white/10">
                 <CardHeader>
@@ -456,8 +343,8 @@ export function Dashboard() {
     );
     }
 
-    // Helper components for brevity
-    function StatCard({ title, value, icon }: { title: string; value: string | number; icon: React.ReactNode }) {
+    // StatCard Component
+    function StatCard({ title, value, icon }: Readonly<{ title: string; value: string | number; icon: React.ReactNode }>) {
     return (
         <Card className="bg-gradient-to-br from-[#1a1919] to-[#0f0f0f] border-white/10">
         <CardContent className="p-4 flex justify-between items-center">
@@ -471,7 +358,8 @@ export function Dashboard() {
     );
     }
 
-    function TokenCard({ token, formatNumber }: { token: typeof mockFanTokens[0]; formatNumber: (num: number) => string }) {
+    // TokenCard Component
+    function TokenCard({ token, formatNumber }: Readonly<{ token: typeof mockFanTokens[0]; formatNumber: (num: number) => string }>) {
     return (
         <Card className="bg-[#0f0f0f] border-white/10 hover:border-primary/30 transition-colors">
         <CardContent className="p-4">

@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import SplineBackground from "./SplineBackground";
-import { useLogin, usePrivy } from '@privy-io/react-auth';
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 
 
 export function HeroSection() {
-    const { login } = useLogin();
-    const { authenticated } = usePrivy();
+    const { setShowAuthFlow } = useDynamicContext();
+    const { primaryWallet } = useDynamicContext();
 
     return (
         <section className="relative h-screen flex items-center justify-center w-full overflow-hidden bg-black">
@@ -65,10 +65,10 @@ export function HeroSection() {
                 className="bg-primary hover:bg-primary/90 px-8 py-4 text-[16px] font-bold tracking-wide uppercase rounded-full shadow-2xl border-primary/20 border transition-all duration-300 hover:scale-105"
                 style={{ fontFamily: 'Lexend, sans-serif' }}
                 onClick={() => {
-                    if (authenticated) {
+                    if (primaryWallet) {
                         window.location.href = "/live";
                     } else {
-                        login();
+                        setShowAuthFlow(true);
                     }
                 }} // Redirect to dashboard if authenticated, otherwise trigger login
                 >

@@ -20,7 +20,7 @@ import { useWriteContract, useWaitForTransactionReceipt, useBalance } from "wagm
 import { CONTRACTS_ADDRESSES } from "@/utils/ContractsAddresses";
 import { parseEther } from "viem";
 import { BETTING_ABI } from "@/lib/abis/bettingAbi";
-import { useWallets } from "@privy-io/react-auth";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { ChatService } from "@/services/chat.service";
 import Confetti from "react-confetti";
 
@@ -56,9 +56,9 @@ export default function PredictionsDialog({
     const [showConfetti, setShowConfetti] = useState(false);
     const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
     const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
-    const { wallets } = useWallets();
+    const { primaryWallet: wallets } = useDynamicContext();
 
-    const user = wallets?.[0]?.address ?? "";
+    const user = wallets?.address ?? "";
 
     const { data: balanceData } = useBalance({
         address: user as `0x{string}`,
@@ -342,6 +342,26 @@ export default function PredictionsDialog({
         return () => clearInterval(interval);
     }, []);
 
+    const getPredictionAmountFontSize = (length: number): string => {
+        if (length <= 3) return "text-7xl";
+        if (length <= 5) return "text-6xl";
+        if (length <= 7) return "text-5xl";
+        if (length <= 9) return "text-4xl";
+        if (length <= 11) return "text-3xl";
+        if (length <= 13) return "text-2xl";
+        if (length <= 15) return "text-xl";
+        if (length <= 17) return "text-lg";
+        if (length <= 19) return "text-base";
+        if (length <= 21) return "text-sm";
+        return "text-3xl";
+    };
+
+    // Helper function to set percentage of max amount
+    const setPercentageAmount = (percentage: number) => {
+        const amount = (maxAmount * percentage / 100);
+        setpredictionAmount(amount.toFixed(2));
+    };
+
     return (
         <>
             {/* Confetti Component */}
@@ -449,10 +469,9 @@ export default function PredictionsDialog({
                                     value={predictionAmount}
                                     onChange={(e) => setpredictionAmount(e.target.value)}
                                     autoFocus
-                                    className="
+                                    className={`
                                         w-auto
                                         max-w-[200px]
-                                        text-7xl
                                         font-extrabold
                                         bg-transparent
                                         text-[var(--foreground)]
@@ -462,15 +481,8 @@ export default function PredictionsDialog({
                                         border-none
                                         ring-0
                                         shadow-none
-                                        py-6
-                                        transition-transform duration-300 ease-in-out
-                                        focus:scale-[1.02]
-                                        tracking-tight
-                                        selection:bg-[var(--accent)]
-                                        [appearance:textfield]
-                                        [&::-webkit-inner-spin-button]:appearance-none
-                                        [&::-webkit-outer-spin-button]:appearance-none
-                                    "
+                                        ${getPredictionAmountFontSize(predictionAmount.length)}
+                                    `}
                                 />
 
                                 {/* Max Button */}
@@ -480,6 +492,19 @@ export default function PredictionsDialog({
                                 >
                                     Max
                                 </button>
+                            </div>
+
+                            {/* Percentage Buttons */}
+                            <div className="flex justify-center gap-2 mt-4">
+                                {[25, 50, 75].map((percentage) => (
+                                    <button
+                                        key={percentage}
+                                        onClick={() => setPercentageAmount(percentage)}
+                                        className="px-3 py-1.5 text-sm font-medium text-[var(--accent-foreground)] bg-[var(--muted)] border border-[var(--border)] rounded-lg hover:bg-[var(--muted-foreground)/10] transition"
+                                    >
+                                        {percentage}%
+                                    </button>
+                                ))}
                             </div>
 
                             {chzPrice && predictionAmount && !isNaN(Number(predictionAmount)) && (
